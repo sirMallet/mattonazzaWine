@@ -18,10 +18,8 @@ public class EmpClientsController implements Initializable {
     private Button button_invio;
     @FXML
     private Label UserName;
-    @FXML
-    private Label fx_Select;
-    @FXML
-    private TextField tf_wine;
+
+
     @FXML
     private TextField tf_UserName;
     @FXML
@@ -69,7 +67,7 @@ public class EmpClientsController implements Initializable {
     private TableColumn<Client, String> Col_Phone;
     @FXML
     private TableColumn<Client, String> Col_Email;
-
+    int CheckAdmin = 0;
 
     Integer index;
     Client ClientSelected = null;
@@ -242,6 +240,7 @@ public class EmpClientsController implements Initializable {
 
     @Override
     public void initialize(java.net.URL location, java.util.ResourceBundle resources) {
+
         UserName.setVisible(false);
         button_Clients.setDisable(true);
         ClientSelected = new Client();
@@ -268,18 +267,26 @@ public class EmpClientsController implements Initializable {
         button_Wines.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtilsEmployee.changeScene(event,"Wines Management","EmpWines.fxml",UserName.getText());
+                DBUtilsEmployee.changeScene(event,"Wines Management","EmpWines.fxml",UserName.getText(),CheckAdmin);
             }
         });
         button_Orders.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtilsEmployee.changeScene(event,"Orders Management","EmpOrders.fxml",UserName.getText());
+                DBUtilsEmployee.changeScene(event,"Orders Management","EmpOrders.fxml",UserName.getText(),CheckAdmin);
+            }
+        });
+        button_Emp.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                DBUtilsEmployee.changeScene(event,"Employee Management","EmpAdmin.fxml",UserName.getText(),CheckAdmin);
             }
         });
 
     }
-    public void setUserInformation(String username){
+    public void setUserInformation(String username, int isAdmin){
+        CheckAdmin = isAdmin;
+        button_Emp.setDisable(CheckAdmin == 0);
         UserName.setText(username);
         fx_Label.setText("Benvenuto " + UserName.getText() + "!");
     }

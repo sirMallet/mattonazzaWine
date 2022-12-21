@@ -10,11 +10,10 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 
-import javax.swing.text.html.ImageView;
 import java.sql.*;
 
 
-public class EmpWinesController implements Initializable {
+public class EmpAdminController implements Initializable {
     @FXML
     private Button button_Wines;
     @FXML
@@ -230,11 +229,10 @@ public class EmpWinesController implements Initializable {
 
     @Override
     public void initialize(java.net.URL location, java.util.ResourceBundle resources) {
-
-
+        button_Emp.setDisable(true);
         UserName.setVisible(false);
         WineSelected = new Wine();
-        button_Wines.setDisable(true);
+
         // settare la tabella
         // set the table view with the wine list from the database (DBUtils) and the columns of the table view (Wine class)
         col_Nome.setCellValueFactory(new PropertyValueFactory<Wine, String>("Nome"));
@@ -267,20 +265,24 @@ public class EmpWinesController implements Initializable {
                 DBUtilsEmployee.changeScene(event,"Orders Management","EmpOrders.fxml",UserName.getText(),CheckAdmin);
             }
         });
-        button_Emp.setOnAction(new EventHandler<ActionEvent>() {
+        button_Wines.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtilsEmployee.changeScene(event,"Employee Management","EmpAdmin.fxml",UserName.getText(),CheckAdmin);
+                DBUtilsEmployee.changeScene(event,"Wines Management","EmpWines.fxml",UserName.getText(),CheckAdmin);
             }
         });
 
     }
-    public void setUserInformation(String username, int isAdmin){
+    public void setUserInformation(String username,int isAdmin){
         CheckAdmin = isAdmin;
-        button_Emp.setDisable(CheckAdmin == 0);
         UserName.setText(username);
         fx_Label.setText("Benvenuto " + UserName.getText() + "!");
+
     }
+
+
+
+
 
 }
 

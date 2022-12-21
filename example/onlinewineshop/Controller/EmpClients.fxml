@@ -107,12 +107,15 @@
                   <Font name="Cambria" size="14.0" />
                </font>
             </Label>
-            <ImageView fitHeight="40.0" fitWidth="41.0" layoutX="174.0" layoutY="12.0" onMouseClicked="#Employee" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../../com/example/onlinewineshop/Controller/imgAccount1.png" />
-               </image>
-            </ImageView>
-            </children></AnchorPane>
+                <Button fx:id="button_Emp" layoutX="174.0" layoutY="12.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="42.0" text="🛈">
+                    <font>
+                        <Font size="18.0" />
+                    </font>
+                </Button>
+
+            </children>
+
+        </AnchorPane>
         <AnchorPane prefHeight="400.0" prefWidth="505.0">
             <children>
                 <TableView fx:id="table_Client" onMouseClicked="#getSelected" prefHeight="500.0" prefWidth="774.0">

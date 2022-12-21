@@ -17,7 +17,7 @@ import java.sql.*;
 public class DBUtilsEmployee {
 
         // Database credentials (change it to your own)
-        public static void changeScene(ActionEvent event, String title, String fxmlFile, String username) {
+        public static void changeScene(ActionEvent event, String title, String fxmlFile, String username,int isAdmin) {
             Parent root = null;
             if(username != null){
                 try {
@@ -26,15 +26,20 @@ public class DBUtilsEmployee {
                     switch (fxmlFile) {
                         case "EmpWines.fxml" -> {
                             EmpWinesController empWinesController = loader.getController(); // get the controller
-                            empWinesController.setUserInformation(username); // set the username
+                            empWinesController.setUserInformation(username, isAdmin); // set the username;
+
                         }
                         case "EmpClients.fxml" -> {
                             EmpClientsController empClientsController = loader.getController(); // get the controller
-                            empClientsController.setUserInformation(username); // set the username
+                            empClientsController.setUserInformation(username,isAdmin); // set the username
                         }
                         case "EmpOrders.fxml" -> {
                             EmpOrdersController empOrdersController = loader.getController(); // get the controller
-                            empOrdersController.setUserInformation(username); // set the username
+                            empOrdersController.setUserInformation(username, isAdmin); // set the username
+                        }
+                        case "EmpAdmin.fxml" -> {
+                            EmpAdminController empAdminController = loader.getController(); // get the controller
+                            empAdminController.setUserInformation(username, isAdmin); // set the username
                         }
                     }
 
@@ -125,6 +130,7 @@ public class DBUtilsEmployee {
                 }
             }
         }
+
         public static void logInDip(ActionEvent event, String Nome,String Cognome,String password){
             Connection connection = null; // initialize the connection
             PreparedStatement preparedStatement = null; // check if the user already exists
@@ -148,7 +154,7 @@ public class DBUtilsEmployee {
                         if(Nome.length()!=0 || Cognome.length()!=0){
                             if(retrivePassword.equals(password)){
                                 System.out.println("Employeee found in the database!");
-                                changeScene(event,"Logged in!","EmpWines.fxml",Nome); // change the scene
+                                changeScene(event,"Logged in!","EmpWines.fxml",Nome,retriveIsAdmin); // change the scene
                             }
                             else{
                                 System.out.println("Wrong password!");
