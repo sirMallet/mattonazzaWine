@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.onlinewineshop.Controller.signupController">
+   <children>
+      <AnchorPane prefHeight="400.0" prefWidth="240.0" style="-fx-background-color: #75151E;">
+         <children>
+            <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="8.0" layoutY="33.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@imgWine1.png" />
+               </image></ImageView>
+            <Label layoutX="46.0" layoutY="160.0" text="ONLINE WINE SHOP " textFill="WHITE">
+               <font>
+                  <Font name="Cambria Bold Italic" size="14.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+      <AnchorPane prefHeight="400.0" prefWidth="385.0">
+         <children>
+            <Label layoutX="52.0" layoutY="244.0" text="email" />
+            <Label layoutX="43.0" layoutY="204.0" text="Indirizzo" />
+            <Label layoutX="28.0" layoutY="155.0" prefHeight="34.0" prefWidth="76.0" text="Numero di tel." />
+            <Label layoutX="29.0" layoutY="124.0" text="Codice Fiscale" />
+            <Label layoutX="40.0" layoutY="84.0" text="Cognome">
+               <font>
+                  <Font name="Cambria" size="14.0" />
+               </font></Label>
+            <Label layoutX="50.0" layoutY="44.0" text="Nome">
+               <font>
+                  <Font name="Cambria" size="14.0" />
+               </font></Label>
+            <Label layoutX="38.0" layoutY="284.0" text="UserName" />
+            <Label layoutX="41.0" layoutY="322.0" prefHeight="18.0" prefWidth="50.0" text="Password" />
+            <TextField fx:id="ft_Nome" layoutX="125.0" layoutY="40.0" />
+            <TextField fx:id="ft_Cognome" layoutX="125.0" layoutY="80.0" />
+            <TextField fx:id="ft_CF" layoutX="125.0" layoutY="120.0" />
+            <TextField fx:id="ft_NumCell" layoutX="125.0" layoutY="160.0" />
+            <TextField fx:id="ft_Indirizzo" layoutX="125.0" layoutY="200.0" />
+            <TextField fx:id="ft_Email" layoutX="125.0" layoutY="240.0" />
+            <TextField fx:id="ft_username" layoutX="125.0" layoutY="280.0" />
+            <Button fx:id="button_Signup" layoutX="160.0" layoutY="360.0" mnemonicParsing="false" style="-fx-background-color: #75151E;" text="Sign up" textFill="WHITE">
+               <font>
+                  <Font name="Cambria Bold" size="14.0" />
+               </font>
+            </Button>
+            <PasswordField fx:id="ft_password" layoutX="125.0" layoutY="319.0" />
+         </children></AnchorPane>
+   </children>
+</HBox>
