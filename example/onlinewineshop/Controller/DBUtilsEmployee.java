@@ -88,6 +88,11 @@ public class DBUtilsEmployee {
                         preparedStatement.setString(1, identifier); // set the username
                         preparedStatement.execute(); // execute the query
                     }
+                    case "Employee" -> {
+                        preparedStatement = connection.prepareStatement("DELETE FROM dipendente WHERE FiscalCode = ?"); // check if the user already exists
+                        preparedStatement.setString(1, identifier); // set the username
+                        preparedStatement.execute(); // execute the query
+                    }
                 }
 
                 if (preparedStatement != null) {
@@ -260,6 +265,51 @@ public class DBUtilsEmployee {
                 Clientlist.add(new Client(resultSet.getString("userName"),resultSet.getString("password"),resultSet.getString("name"),resultSet.getString("surname"), resultSet.getString("fiscalCode"), resultSet.getString("phone"), resultSet.getString("address"), resultSet.getString("email")));
             }
             return Clientlist;
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+        finally {
+            if(resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(preparedStatement != null){
+                try{
+                    preparedStatement.close();
+                }catch (SQLException e){
+                    e.printStackTrace();
+                }
+            }
+            if(connection != null){
+                try{
+                    connection.close();
+                }catch (SQLException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return null;
+    }
+    public static ObservableList<Employee> ViewListEmployee(){
+        Connection connection = null; // initialize the connection
+        PreparedStatement preparedStatement = null; // check if the user already exists
+        ResultSet resultSet = null;
+        ObservableList<Employee> Employeelist = FXCollections.observableArrayList();
+        try{
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/javafx wine","root",""); // connect to the database
+            preparedStatement = connection.prepareStatement("SELECT * FROM dipendente"); // check if the user already exists
+
+            resultSet = preparedStatement.executeQuery(); // execute the query
+            while (resultSet.next()) {
+                //(String nome, String region, int vintage, String varietal, int Valutazione, double prezzo)
+                Employeelist.add(new Employee(resultSet.getString("Nome"),resultSet.getString("Cognome"),resultSet.getString("FiscalCode"),resultSet.getString("IndirizzoEmail"), resultSet.getString("NumTel"), resultSet.getString("IndirizzoResidenza"), resultSet.getBoolean("isAdmin"), resultSet.getString("Password")));
+            }
+            return Employeelist;
         }
         catch (SQLException e){
             e.printStackTrace();

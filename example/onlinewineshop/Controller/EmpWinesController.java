@@ -219,11 +219,15 @@ public class EmpWinesController implements Initializable {
         WineSelected.setValutazione(col_Val.getCellData(index));
         WineSelected.setPrezzo(col_Prezzo.getCellData(index));
         WineSelected.setQta(col_Qta.getCellData(index));
+        WineSelected.setRegion(col_Regione.getCellData(index));
+        WineSelected.setVintage(col_Vintage.getCellData(index));
         tf_wine.setText(WineSelected.getNome());
         tf_Vintage.setText(String.valueOf(WineSelected.getVintage()));
         tf_Val.setText(String.valueOf(WineSelected.getValutazione()));
         tf_Prezzo.setText(String.valueOf(WineSelected.getPrezzo()));
         tf_Qta.setText(String.valueOf(WineSelected.getQta()));
+        tf_Regione.setText(WineSelected.getRegion());
+        tf_Varietal.setText(WineSelected.getVarietal());
 
 
     }

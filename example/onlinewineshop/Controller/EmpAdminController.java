@@ -1,6 +1,6 @@
 package com.example.onlinewineshop.Controller;
 
-import com.example.onlinewineshop.classes.Wine;
+import com.example.onlinewineshop.classes.Employee;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -15,27 +15,30 @@ import java.sql.*;
 
 public class EmpAdminController implements Initializable {
     @FXML
+    private Label UserName;
+    @FXML
+    private TextField tf_Password;
+    @FXML
+    private TextField tf_Nome;
+    @FXML
+    private TextField tf_Cognome;
+    @FXML
+    private TextField tf_FiscalCode;
+    @FXML
+    private TextField tf_IndirizzoEmail;
+    @FXML
+    private TextField tf_IndirizzoResidenza;
+    @FXML
+    private TextField tf_NumTel;
+    @FXML
+    private TextField tf_isAdmin;
+
+    @FXML
     private Button button_Wines;
     @FXML
-    private Label fx_Select;
+    private Button button_Clients;
     @FXML
-    private TextField tf_wine;
-    @FXML
-    private TextField tf_Regione;
-    @FXML
-    private TextField tf_Varietal;
-
-    @FXML
-    private TextField tf_Vintage;
-    @FXML
-    private TextField tf_Val;
-    @FXML
-    private TextField tf_Prezzo;
-    @FXML
-    private TextField tf_Qta;
-    @FXML
-    private Label UserName;
-
+    private Button button_Orders;
     @FXML
     private Button button_Logout;
     @FXML
@@ -43,32 +46,44 @@ public class EmpAdminController implements Initializable {
     @FXML
     private Label fx_Label;
     @FXML
-    private TableView<Wine> table_Wine;
-    @FXML
-    private TableColumn<Wine, String> col_Nome;
-    @FXML
-    private TableColumn<Wine, Integer> col_Qta;
-    @FXML
-    private TableColumn<Wine, Integer> col_Vintage;
-    @FXML
-    private TableColumn<Wine, String> col_Regione;
-    @FXML
-    private TableColumn<Wine, String> col_Varietal;
-    @FXML
-    private TableColumn<Wine, Integer> col_Val;
-    @FXML
-    private TableColumn<Wine, Float> col_Prezzo;
+    private TableView<Employee> table_Emp;
 
+    @FXML
+    private TableColumn<Employee, String> Col_Nome;
+    @FXML
+    private TableColumn<Employee, String> Col_Cognome;
+    @FXML
+    private TableColumn<Employee, String> Col_FiscalCode;
+    @FXML
+    private TableColumn<Employee, String> Col_IndirizzoEmail;
+    @FXML
+    private TableColumn<Employee, String> Col_NumTel;
+    @FXML
+    private TableColumn<Employee, String> Col_IndirizzoResidenza;
+    @FXML
+    private TableColumn<Employee, Boolean> Col_isAdmin;
+    @FXML
+    private TableColumn<Employee, String> Col_Password;
     int CheckAdmin = 0;
+
     Integer index;
-    Wine WineSelected = null;
-    ObservableList<Wine> listW = null;
-    @FXML
-    private Button button_Clients;
-    @FXML
-    private Button button_Orders;
-    @FXML
-    private Button button_Modifica;
+    Employee EmployeeSelected = null;
+    ObservableList<Employee> listE = null;
+
+    public void Delete(){
+        try{
+            String FiscalCode = tf_FiscalCode.getText();
+            DBUtilsEmployee.Delete(FiscalCode,"Employee");
+            table_Emp.refresh();
+            listE = DBUtilsEmployee.ViewListEmployee();
+            // aggiungere la lista alla tabella
+            table_Emp.setItems(listE);
+
+        }
+        catch(Exception e){
+        }
+
+    }
     @FXML
     public void Add(){
         Connection connection = null; // initialize the connection
@@ -76,34 +91,39 @@ public class EmpAdminController implements Initializable {
         ResultSet resultSet = null;
         try{
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/javafx wine","root",""); // connect to the database
-            preparedStatement = connection.prepareStatement("INSERT INTO wine (Nome,vintage,region,varietal,valutazione,prezzo,quantita)VALUES(?,?,?,?,?,?,?)"); // check if the user already exists
-            preparedStatement.setString(1, tf_wine.getText()); // set the name wine
-            preparedStatement.setString(2, tf_Vintage.getText()); // set the varietal
-            preparedStatement.setString(3, tf_Regione.getText()); // set the region
-            preparedStatement.setString(4, tf_Varietal.getText()); // set the vintage
-            preparedStatement.setString(5, tf_Val.getText()); // set the value
-            preparedStatement.setString(6, tf_Prezzo.getText()); // set the price
-            preparedStatement.setString(7, tf_Qta.getText()); // set the qta
-
+            preparedStatement = connection.prepareStatement("INSERT INTO dipendente (Nome,Cognome,FiscalCode,IndirizzoEmail,NumTel,IndirizzoResidenza,isAdmin,Password)VALUES(?,?,?,?,?,?,?,?)"); // check if the user already exists
+            preparedStatement.setString(1, tf_Nome.getText()); // set the Nome
+            preparedStatement.setString(2, tf_Cognome.getText()); // set the Cognome
+            preparedStatement.setString(3, tf_FiscalCode.getText()); // set the FiscalCode
+            preparedStatement.setString(4, tf_IndirizzoEmail.getText()); // set the indirizzo email
+            preparedStatement.setString(5, tf_NumTel.getText()); // set the NumTel
+            preparedStatement.setString(6, tf_IndirizzoResidenza.getText()); // set the indirizzoResidenza
+            if (tf_isAdmin.getText().equals("true")||tf_isAdmin.getText().equals("1")) {
+                tf_isAdmin.setText("1");
+            } else {
+                tf_isAdmin.setText("0");
+            }
+            preparedStatement.setString(7, tf_isAdmin.getText()); // set the isAdmin
+            preparedStatement.setString(8, tf_Password.getText()); // set the password
 
             preparedStatement.execute(); // execute the query
-            tf_wine.clear();
-            tf_Varietal.clear();
-            tf_Regione.clear();
-            tf_Vintage.clear();
-            tf_Val.clear();
-            tf_Prezzo.clear();
-            tf_Qta.clear();
+            tf_Nome.clear();
+            tf_Cognome.clear();
+            tf_FiscalCode.clear();
+            tf_IndirizzoEmail.clear();
+            tf_NumTel.clear();
+            tf_IndirizzoResidenza.clear();
+            tf_isAdmin.clear();
+            tf_Password.clear();
 
-
-            listW = DBUtilsEmployee.ViewListWines();
+            listE = DBUtilsEmployee.ViewListEmployee();
             // aggiungere la lista alla tabella
-            table_Wine.setItems(listW);
+            table_Emp.setItems(listE);
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION); // create an alert
-            alert.setTitle("Cliente aggiornato");
-            alert.setHeaderText("Cliente aggiornato");
-            alert.setContentText("Cliente aggiornato");
+            alert.setTitle("Impiegato aggiornato");
+            alert.setHeaderText("Impiegato aggiornato");
+            alert.setContentText("Impiegato aggiornato");
             alert.show();
 
 
@@ -132,51 +152,46 @@ public class EmpAdminController implements Initializable {
 
         System.out.println("Add");
     }
-
-    public void Delete(){
-        try{
-            String NomeWine = tf_wine.getText();
-            DBUtilsEmployee.Delete(NomeWine,"Wine");
-            table_Wine.refresh();
-            listW = DBUtilsEmployee.ViewListWines();
-            // aggiungere la lista alla tabella
-            table_Wine.setItems(listW);
-
-        }
-        catch(Exception e){
-        }
-
-    }
     @FXML
     public void Update(){
-
-
         Connection connection = null; // initialize the connection
         PreparedStatement preparedStatement = null; // check if the user already exists
         ResultSet resultSet = null;
         try{
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/javafx wine","root",""); // connect to the database
-            preparedStatement = connection.prepareStatement("UPDATE wine SET vintage=?,valutazione=?,prezzo=?,quantita=?  WHERE Nome = ?"); // check if the user already exists
-            preparedStatement.setString(1, tf_Vintage.getText()); // set the username
-            preparedStatement.setString(2, tf_Val.getText()); // set the Valutazione
-            preparedStatement.setString(3, tf_Prezzo.getText()); // set the price
-            preparedStatement.setString(4, tf_Qta.getText()); // set the quantita
-            preparedStatement.setString(5, WineSelected.getNome()); // set the password
+            preparedStatement = connection.prepareStatement("UPDATE dipendente SET Nome = ? ,Cognome = ?,FiscalCode = ?,IndirizzoEmail = ?, NumTel= ?,IndirizzoResidenza = ?,isAdmin = ?,Password=? WHERE FiscalCode = ?"); // check if the user already exists
+            preparedStatement.setString(1, tf_Nome.getText()); // set the username
+            preparedStatement.setString(2, tf_Cognome.getText()); // set the password
+            preparedStatement.setString(3, tf_FiscalCode.getText()); // set the name
+            preparedStatement.setString(4, tf_IndirizzoEmail.getText()); // set the surname
+            preparedStatement.setString(5, tf_NumTel.getText()); // set the fiscalCode
+            preparedStatement.setString(6, tf_IndirizzoResidenza.getText()); // set the phone
+            if (tf_isAdmin.getText().equals("true")||tf_isAdmin.getText().equals("1")) {
+                tf_isAdmin.setText("1");
+            } else {
+                tf_isAdmin.setText("0");
+            }
+            preparedStatement.setString(7, tf_isAdmin.getText()); // set the address
+            preparedStatement.setString(8, tf_Password.getText()); // set the email
+            preparedStatement.setString(9,  EmployeeSelected.getFiscalCode()); // set the old username
             preparedStatement.execute(); // execute the query
-            tf_wine.clear();
-            tf_Vintage.clear();
-            tf_Val.clear();
-            tf_Prezzo.clear();
-            tf_Qta.clear();
+            tf_Nome.clear();
+            tf_Cognome.clear();
+            tf_FiscalCode.clear();
+            tf_IndirizzoEmail.clear();
+            tf_NumTel.clear();
+            tf_IndirizzoResidenza.clear();
+            tf_isAdmin.clear();
+            tf_Password.clear();
 
-            listW = DBUtilsEmployee.ViewListWines();
+            listE = DBUtilsEmployee.ViewListEmployee();
             // aggiungere la lista alla tabella
-            table_Wine.setItems(listW);
+            table_Emp.setItems(listE);
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION); // create an alert
-            alert.setTitle("Cliente aggiornato");
-            alert.setHeaderText("Cliente aggiornato");
-            alert.setContentText("Cliente aggiornato");
+            alert.setTitle("Dipendente aggiornato");
+            alert.setHeaderText("Dipendente aggiornato");
+            alert.setContentText("Dipendente aggiornato");
             alert.show();
 
 
@@ -203,66 +218,56 @@ public class EmpAdminController implements Initializable {
         }
     }
 
-
     @FXML
     void getSelected(MouseEvent event) {
-        index = table_Wine.getSelectionModel().getSelectedIndex();
+        index = table_Emp.getSelectionModel().getSelectedIndex();
         if (index <= -1) {
             return;
         }
-        WineSelected.setNome(col_Nome.getCellData(index));
+        EmployeeSelected.setNome(Col_Nome.getCellData(index));
+        EmployeeSelected.setCognome(Col_Cognome.getCellData(index));
+        EmployeeSelected.setFiscalCode(Col_FiscalCode.getCellData(index));
+        EmployeeSelected.setIndirizzoEmail(Col_IndirizzoEmail.getCellData(index));
+        EmployeeSelected.setNumTel(Col_NumTel.getCellData(index));
+        EmployeeSelected.setIndirizzoResidenza(Col_IndirizzoResidenza.getCellData(index));
+        EmployeeSelected.setIsAdmin(Col_isAdmin.getCellData(index));
+        EmployeeSelected.setPassword(Col_Password.getCellData(index));
+        tf_Nome.setText(EmployeeSelected.getNome());
+        tf_Cognome.setText(String.valueOf(EmployeeSelected.getCognome()));
+        tf_FiscalCode.setText(String.valueOf(EmployeeSelected.getFiscalCode()));
+        tf_IndirizzoEmail.setText(String.valueOf(EmployeeSelected.getIndirizzoEmail()));
+        tf_NumTel.setText(String.valueOf(EmployeeSelected.getNumTel()));
+        tf_IndirizzoResidenza.setText(String.valueOf(EmployeeSelected.getIndirizzoResidenza()));
+        tf_isAdmin.setText(String.valueOf(EmployeeSelected.getIsAdmin()));
+        tf_Password.setText(String.valueOf(EmployeeSelected.getPassword()));
 
-        WineSelected.setVintage(col_Vintage.getCellData(index));
-        WineSelected.setRegion(col_Regione.getCellData(index));
-        WineSelected.setVarietal(col_Varietal.getCellData(index));
-        WineSelected.setValutazione(col_Val.getCellData(index));
-        WineSelected.setPrezzo(col_Prezzo.getCellData(index));
-        WineSelected.setQta(col_Qta.getCellData(index));
-        tf_wine.setText(WineSelected.getNome());
-        tf_Vintage.setText(String.valueOf(WineSelected.getVintage()));
-        tf_Val.setText(String.valueOf(WineSelected.getValutazione()));
-        tf_Prezzo.setText(String.valueOf(WineSelected.getPrezzo()));
-        tf_Qta.setText(String.valueOf(WineSelected.getQta()));
 
 
     }
 
     @Override
     public void initialize(java.net.URL location, java.util.ResourceBundle resources) {
-        button_Emp.setDisable(true);
-        UserName.setVisible(false);
-        WineSelected = new Wine();
 
+        UserName.setVisible(false);
+        EmployeeSelected = new Employee();
         // settare la tabella
         // set the table view with the wine list from the database (DBUtils) and the columns of the table view (Wine class)
-        col_Nome.setCellValueFactory(new PropertyValueFactory<Wine, String>("Nome"));
-        col_Vintage.setCellValueFactory(new PropertyValueFactory<Wine, Integer>("Vintage"));
-        col_Regione.setCellValueFactory(new PropertyValueFactory<Wine, String>("region"));
-        col_Varietal.setCellValueFactory(new PropertyValueFactory<Wine, String>("Varietal"));
-        col_Val.setCellValueFactory(new PropertyValueFactory<Wine, Integer>("Valutazione"));
-        col_Prezzo.setCellValueFactory(new PropertyValueFactory<Wine, Float>("Prezzo"));
-        col_Qta.setCellValueFactory(new PropertyValueFactory<Wine, Integer>("Qta"));
-        // prendere i dati dal database
-        listW = DBUtilsEmployee.ViewListWines();
+        Col_Nome.setCellValueFactory(new PropertyValueFactory<Employee, String>("Nome"));
+        Col_Cognome.setCellValueFactory(new PropertyValueFactory<Employee, String>("Cognome"));
+        Col_FiscalCode.setCellValueFactory(new PropertyValueFactory<Employee, String>("FiscalCode"));
+        Col_IndirizzoEmail.setCellValueFactory(new PropertyValueFactory<Employee, String>("IndirizzoEmail"));
+        Col_NumTel.setCellValueFactory(new PropertyValueFactory<Employee, String>("NumTel"));
+        Col_IndirizzoResidenza.setCellValueFactory(new PropertyValueFactory<Employee, String>("IndirizzoResidenza"));
+        Col_isAdmin.setCellValueFactory(new PropertyValueFactory<Employee, Boolean>("isAdmin"));
+        Col_Password.setCellValueFactory(new PropertyValueFactory<Employee, String>("Password"));
+        listE = DBUtilsEmployee.ViewListEmployee();
         // aggiungere la lista alla tabella
-        table_Wine.setItems(listW);
+        table_Emp.setItems(listE);
 
-        button_Clients.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                DBUtilsEmployee.changeScene(event,"Clients Management","EmpClients.fxml",UserName.getText(),CheckAdmin);
-            }
-        });
         button_Logout.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 DBUtilsClient.changeScene(event,"Log in!","login.fxml",null);
-            }
-        });
-        button_Orders.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                DBUtilsEmployee.changeScene(event,"Orders Management","EmpOrders.fxml",UserName.getText(),CheckAdmin);
             }
         });
         button_Wines.setOnAction(new EventHandler<ActionEvent>() {
@@ -271,13 +276,24 @@ public class EmpAdminController implements Initializable {
                 DBUtilsEmployee.changeScene(event,"Wines Management","EmpWines.fxml",UserName.getText(),CheckAdmin);
             }
         });
+        button_Clients.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                DBUtilsEmployee.changeScene(event,"Clients Management","EmpClients.fxml",UserName.getText(),CheckAdmin);
+            }
+        });
+        button_Orders.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                DBUtilsEmployee.changeScene(event,"Orders Management","EmpOrders.fxml",UserName.getText(),CheckAdmin);
+            }
+        });
 
     }
-    public void setUserInformation(String username,int isAdmin){
-        CheckAdmin = isAdmin;
+    public void setUserInformation(String username, int isAdmin){
+        button_Emp.setDisable(CheckAdmin == 0);
         UserName.setText(username);
         fx_Label.setText("Benvenuto " + UserName.getText() + "!");
-
     }
 
 

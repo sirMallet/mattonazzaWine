@@ -9,7 +9,7 @@
     <children>
         <AnchorPane prefHeight="400.0" prefWidth="240.0" style="-fx-background-color: #75151E;">
             <children>
-                <Button fx:id="button_Logout" layoutX="82.0" layoutY="458.0" mnemonicParsing="false" text="Logout">
+                <Button fx:id="button_Logout" layoutX="88.0" layoutY="450.0" mnemonicParsing="false" text="Logout">
                     <font>
                         <Font name="Cambria Bold" size="14.0" />
                     </font>
@@ -19,7 +19,7 @@
                         <Font name="Cambria" size="14.0" />
                     </font>
                 </Label>
-                <Button fx:id="button_Orders" layoutX="149.0" layoutY="60.0" mnemonicParsing="false" text="Ordini">
+                <Button fx:id="button_Orders" layoutX="153.0" layoutY="60.0" mnemonicParsing="false" text="Ordini">
                     <font>
                         <Font name="Cambria Bold" size="14.0" />
                     </font>
@@ -34,66 +34,77 @@
                         <Font name="Cambria Bold" size="14.0" />
                     </font>
                 </Button>
-                <TextField fx:id="tf_Vintage" layoutX="84.0" layoutY="197.0" prefHeight="26.0" prefWidth="127.0" />
-                <TextField fx:id="tf_Regione" layoutX="84.0" layoutY="229.0" prefHeight="26.0" prefWidth="127.0" />
-                <TextField fx:id="tf_Varietal" layoutX="85.0" layoutY="260.0" prefHeight="26.0" prefWidth="127.0" />
-                <Label layoutX="27.0" layoutY="201.0" prefHeight="18.0" prefWidth="64.0" text="Vintage:" textFill="WHITE">
-                    <font>
-                        <Font name="Cambria Italic" size="14.0" />
-                    </font>
-                </Label>
-                <TextField fx:id="tf_wine" layoutX="18.0" layoutY="157.0" prefHeight="26.0" prefWidth="204.0" />
-                <Label layoutX="61.0" layoutY="127.0" text="VinoSelezionato:" textFill="WHITE">
-                    <font>
-                        <Font name="Cambria Bold" size="14.0" />
-                    </font>
-                </Label>
-                <Button fx:id="button_Modifica" layoutX="28.0" layoutY="410.0" mnemonicParsing="false" onAction="#Update" text="Modifica">
+                <TextField fx:id="tf_Nome" layoutX="66.0" layoutY="136.0" />
+                <TextField fx:id="tf_Cognome" layoutX="66.0" layoutY="162.0" />
+                <TextField fx:id="tf_FiscalCode" layoutX="66.0" layoutY="188.0" />
+                <TextField fx:id="tf_IndirizzoEmail" layoutX="66.0" layoutY="214.0" />
+                <TextField fx:id="tf_NumTel" layoutX="66.0" layoutY="240.0" />
+                <TextField fx:id="tf_IndirizzoResidenza" layoutX="66.0" layoutY="266.0" />
+                <TextField fx:id="tf_isAdmin" layoutX="66.0" layoutY="292.0" />
+                <TextField fx:id="tf_Password" layoutX="66.0" layoutY="318.0" />
+                <Button fx:id="button_Modifica" layoutX="26.0" layoutY="365.0" mnemonicParsing="false" onAction="#Update" text="Modifica">
                     <font>
                         <Font name="Cambria Bold" size="14.0" />
                     </font>
                 </Button>
-                <Label layoutX="28.0" layoutY="232.0" prefHeight="18.0" prefWidth="90.0" text="Regione:" textFill="WHITE">
-                    <font>
-                        <Font name="Cambria Italic" size="14.0" />
-                    </font>
-                </Label>
-                <Label layoutX="27.0" layoutY="264.0" prefHeight="18.0" prefWidth="64.0" text="Varietal:" textFill="WHITE">
-                    <font>
-                        <Font name="Cambria Italic" size="14.0" />
-                    </font>
-                </Label>
-                <ImageView fx:id="button_Trash" fitHeight="35.0" fitWidth="40.0" layoutX="119.0" layoutY="407.0" onMouseClicked="#Delete" pickOnBounds="true" preserveRatio="true">
+                <ImageView fitHeight="40.0" fitWidth="50.0" layoutX="111.0" layoutY="360.0" onMouseClicked="#Delete" pickOnBounds="true" preserveRatio="true">
                     <image>
                         <Image url="@../../../com/example/onlinewineshop/Controller/imgTrash1.png" />
                     </image>
                 </ImageView>
-                <ImageView fitHeight="35.0" fitWidth="40.0" layoutX="162.0" layoutY="407.0" onMouseClicked="#Add" pickOnBounds="true" preserveRatio="true">
+                <Label layoutX="59.0" layoutY="110.0" text="Employee Selezionato: " textFill="WHITE">
+                    <font>
+                        <Font name="Cambria" size="14.0" />
+                    </font>
+                </Label>
+                <ImageView fitHeight="40.0" fitWidth="50.0" layoutX="164.0" layoutY="360.0" onMouseClicked="#Add" pickOnBounds="true" preserveRatio="true">
                     <image>
                         <Image url="@../../../com/example/onlinewineshop/Controller/imgPlus1.png" />
                     </image>
                 </ImageView>
-                <Label layoutX="27.0" layoutY="360.0" prefHeight="18.0" prefWidth="64.0" text="Quantità:" textFill="WHITE">
+                <Label layoutX="14.0" layoutY="140.0" text="nome:" textFill="WHITE">
                     <font>
-                        <Font name="Cambria Italic" size="14.0" />
+                        <Font name="Cambria" size="10.0" />
                     </font>
                 </Label>
-                <TextField fx:id="tf_Qta" layoutX="123.0" layoutY="353.0" prefHeight="26.0" prefWidth="90.0" />
-                <Label layoutX="28.0" layoutY="326.0" prefHeight="18.0" prefWidth="90.0" text="Prezzo (CAD):" textFill="WHITE">
+                <Label layoutX="14.0" layoutY="168.0" text="cognome:" textFill="WHITE">
                     <font>
-                        <Font name="Cambria Italic" size="14.0" />
+                        <Font name="Cambria" size="10.0" />
                     </font>
                 </Label>
-                <TextField fx:id="tf_Prezzo" layoutX="123.0" layoutY="322.0" prefHeight="26.0" prefWidth="90.0" />
-                <Label layoutX="27.0" layoutY="296.0" prefHeight="18.0" prefWidth="80.0" text="Valutazione:" textFill="WHITE">
+                <Label layoutX="14.0" layoutY="298.0" text="isAdmin:" textFill="WHITE">
                     <font>
-                        <Font name="Cambria Italic" size="14.0" />
+                        <Font name="Cambria" size="10.0" />
                     </font>
                 </Label>
-                <TextField fx:id="tf_Val" layoutX="123.0" layoutY="291.0" prefHeight="26.0" prefWidth="90.0" />
-                <Label fx:id="UserName" layoutX="19.0" layoutY="102.0" textFill="WHITE">
+                <Label layoutX="14.0" layoutY="324.0" text="password:" textFill="WHITE">
                     <font>
-                        <Font name="Cambria Bold" size="14.0" />
+                        <Font name="Cambria" size="10.0" />
+                    </font>
+                </Label>
+                <Label layoutX="14.0" layoutY="272.0" text="indirizzoR:" textFill="WHITE">
+                    <font>
+                        <Font name="Cambria" size="10.0" />
+                    </font>
+                </Label>
+                <Label layoutX="14.0" layoutY="246.0" text="NumTel:" textFill="WHITE">
+                    <font>
+                        <Font name="Cambria" size="10.0" />
+                    </font>
+                </Label>
+                <Label layoutX="14.0" layoutY="220.0" text="indirizzo E:" textFill="WHITE">
+                    <font>
+                        <Font name="Cambria" size="10.0" />
+                    </font>
+                </Label>
+                <Label layoutX="14.0" layoutY="194.0" text="FiscalCode:" textFill="WHITE">
+                    <font>
+                        <Font name="Cambria" size="10.0" />
+                    </font>
+                </Label>
+                <Label fx:id="UserName" layoutX="19.0" layoutY="91.0" textFill="WHITE">
+                    <font>
+                        <Font name="Cambria" size="14.0" />
                     </font>
                 </Label>
                 <Button fx:id="button_Emp" layoutX="174.0" layoutY="12.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="42.0" text="🛈">
@@ -101,19 +112,23 @@
                         <Font size="18.0" />
                     </font>
                 </Button>
-            </children></AnchorPane>
+
+            </children>
+
+        </AnchorPane>
 
         <AnchorPane prefHeight="400.0" prefWidth="505.0">
             <children>
-                <TableView fx:id="table_Wine" onMouseClicked="#getSelected" prefHeight="500.0" prefWidth="774.0">
+                <TableView fx:id="table_Emp" onMouseClicked="#getSelected" prefHeight="500.0" prefWidth="774.0">
                     <columns>
-                        <TableColumn fx:id="col_Nome" prefWidth="300.00" text="Nome" />
-                        <TableColumn fx:id="col_Vintage" prefWidth="50.00" text="Vintage" />
-                        <TableColumn fx:id="col_Regione" prefWidth="100.0" text="Regione" />
-                        <TableColumn fx:id="col_Varietal" prefWidth="147.0" text="Varietal" />
-                        <TableColumn fx:id="col_Val" prefWidth="52.0" text="Val." />
-                        <TableColumn fx:id="col_Prezzo" prefWidth="61.5999755859375" text="Prezzo" />
-                        <TableColumn fx:id="col_Qta" prefWidth="62.39999999999998" text="Qta" />
+                        <TableColumn fx:id="Col_Nome" prefWidth="102.99995422363281" text="Nome" />
+                        <TableColumn fx:id="Col_Cognome" prefWidth="119.99996948242188" text="Cognome" />
+                        <TableColumn fx:id="Col_FiscalCode" prefWidth="140.800048828125" text="FiscalCode" />
+                        <TableColumn fx:id="Col_IndirizzoEmail" prefWidth="115.20001220703125" text="IndirizzoEmail" />
+                        <TableColumn fx:id="Col_NumTel" prefWidth="61.0" text="NumTel" />
+                        <TableColumn fx:id="Col_IndirizzoResidenza" minWidth="0.0" prefWidth="113.4000244140625" text="IndirizzoResidenza" />
+                        <TableColumn fx:id="Col_isAdmin" prefWidth="77.0" text="isAdmin" />
+                        <TableColumn fx:id="Col_Password" prefWidth="40.80002441406248" text="Password" />
                     </columns>
                 </TableView>
             </children></AnchorPane>
