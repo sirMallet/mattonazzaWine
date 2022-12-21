@@ -1,13 +1,18 @@
 package com.example.onlinewineshop.classes;
 
+import javafx.event.ActionEvent;
+import javafx.scene.control.Alert;
+
+import java.sql.*;
+
 public class Wine {
 	private String nome;
 	private String region;
 	private int vintage;
 	private String varietal;
 	private int Valutazione;
-	private double prezzo;
-	
+	private float prezzo;
+	private int qta;
 	public Wine(){
 		this.nome = "";
 		this.region = "";
@@ -15,16 +20,18 @@ public class Wine {
 		this.varietal = "";
 		this.Valutazione = 0;
 		this.prezzo = 0;
+		this.qta=0;
 
 	}
 	
-	public Wine(String nome, String region, int vintage, String varietal, int Valutazione, double prezzo){
+	public Wine(String nome, String region, int vintage, String varietal, int Valutazione, float prezzo,int qta){
 		this.nome = nome;
 		this.region = region;
 		this.vintage = vintage;
 		this.varietal = varietal;
 		this.Valutazione = Valutazione;
-		this.prezzo = prezzo;
+		this.prezzo =  prezzo;
+		this.qta = qta;
 	}
 	
 	public String getNome() {
@@ -58,11 +65,19 @@ public class Wine {
 	public void setValutazione(int valutazione) {
 		Valutazione = valutazione;
 	}
-	public double getPrezzo() {
+	public float getPrezzo() {
 		return prezzo;
 	}
-	public void setPrezzo(double prezzo) {
+	public void setPrezzo(float prezzo) {
 		this.prezzo = prezzo;
+	}
+	public int getQta() {
+		return qta;
+	}
+
+
+	public void setQta(int qta) {
+		this.qta = qta;
 	}
 
 	//Override toString method

@@ -1,6 +1,6 @@
 package com.example.onlinewineshop.classes;
 
-public class Bottle extends Wine{
+public class Bottle extends Wine {
 	private float quality;
 	private double price;
 	private int quantitySell;
@@ -12,8 +12,8 @@ public class Bottle extends Wine{
 		this.quantitySell = 0;
 	}
 	
-	public Bottle(String nome, String region, int vintage, String varietal, int Valutazione,double prezzo, float quality, double price, int quantitySell){
-		super(nome, region, vintage, varietal, Valutazione,prezzo);
+	public Bottle(String nome, String region, int vintage, String varietal, int Valutazione,float prezzo,int quantita, float quality, double price, int quantitySell){
+		super(nome, region, vintage, varietal, Valutazione,prezzo,quantita);
 		this.quality = quality;
 		this.price = price;
 		this.quantitySell = quantitySell;

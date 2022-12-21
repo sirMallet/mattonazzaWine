@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="1150.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.onlinewineshop.Controller.EmpOrdersController">
+    <children>
+        <AnchorPane prefHeight="400.0" prefWidth="240.0" style="-fx-background-color: #75151E;">
+            <children>
+                <Button fx:id="button_Logout" layoutX="80.0" layoutY="450.0" mnemonicParsing="false" text="Logout">
+                    <font>
+                        <Font name="Cambria Bold" size="14.0" />
+                    </font>
+                </Button>
+                <Label fx:id="fx_Label" layoutX="9.0" layoutY="14.0" textFill="WHITE">
+                    <font>
+                        <Font name="Cambria" size="14.0" />
+                    </font>
+                </Label>
+            <Button fx:id="button_Orders" layoutX="155.0" layoutY="60.0" mnemonicParsing="false" text="Ordini">
+               <font>
+                  <Font name="Cambria Bold" size="14.0" />
+               </font>
+            </Button>
+            <Button fx:id="button_Clients" layoutX="81.0" layoutY="60.0" mnemonicParsing="false" text="Clienti">
+               <font>
+                  <Font name="Cambria Bold" size="14.0" />
+               </font>
+            </Button>
+            <Button fx:id="button_Wines" layoutX="14.0" layoutY="60.0" mnemonicParsing="false" text="Wine">
+               <font>
+                  <Font name="Cambria Bold" size="14.0" />
+               </font>
+            </Button>
+            <TextField fx:id="tf_UserName" layoutX="37.0" layoutY="190.0" />
+            <TextField fx:id="tf_Prezzo" layoutX="37.0" layoutY="232.0" />
+            <TextField fx:id="tf_Qta" layoutX="37.0" layoutY="272.0" />
+            <Label layoutX="55.0" layoutY="157.0" text="Dettaglio Ordine:" textFill="WHITE">
+               <font>
+                  <Font name="Cambria Bold" size="14.0" />
+               </font>
+            </Label>
+            <ImageView fx:id="button_Accept" fitHeight="27.0" fitWidth="34.0" layoutX="66.0" layoutY="316.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../com/example/onlinewineshop/Controller/imgTick1.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="button_Delete" fitHeight="28.0" fitWidth="27.0" layoutX="130.0" layoutY="316.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../com/example/onlinewineshop/Controller/imgCross1.png" />
+               </image>
+            </ImageView>
+            <Label fx:id="UserName" layoutX="14.0" layoutY="100.0" textFill="WHITE">
+               <font>
+                  <Font name="Cambria Bold" size="14.0" />
+               </font>
+            </Label>
+            <ImageView fitHeight="39.0" fitWidth="45.0" layoutX="175.0" layoutY="14.0" onMouseClicked="#Employee" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../com/example/onlinewineshop/Controller/imgAccount1.png" />
+               </image></ImageView>
+            </children></AnchorPane>
+        <AnchorPane prefHeight="400.0" prefWidth="505.0">
+            <children>
+                <TableView fx:id="table_Orders" onMouseClicked="#getSelected" prefHeight="500.0" prefWidth="774.0">
+                    <columns>
+                        <TableColumn fx:id="Col_UserName" prefWidth="441.9999694824219" text="Username" />
+                        <TableColumn fx:id="Col_Prezzo" prefWidth="147.5999755859375" text="Prezzo" />
+                  <TableColumn fx:id="Col_Qta" prefWidth="183.20001220703125" text="Qta" />
+                    </columns>
+                </TableView>
+            </children></AnchorPane>
+    </children>
+</HBox>

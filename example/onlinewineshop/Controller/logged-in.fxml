@@ -1,23 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
 <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="1150.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.onlinewineshop.Controller.LoggedInController">
    <children>
-      <AnchorPane prefHeight="500.0" prefWidth="100.0" style="-fx-background-color: #75151E;">
+      <AnchorPane prefHeight="400.0" prefWidth="240.0" style="-fx-background-color: #75151E;">
          <children>
             <Button fx:id="button_Logout" layoutX="71.0" layoutY="450.0" mnemonicParsing="false" text="Logout">
                <font>
                   <Font name="Cambria Bold" size="14.0" />
                </font>
             </Button>
-            <Label fx:id="fx_Label" alignment="CENTER" layoutX="3.0" layoutY="14.0" prefHeight="18.0" prefWidth="223.0" textAlignment="CENTER" textFill="WHITE" />
+            <Label fx:id="fx_Prize" alignment="CENTER" layoutX="12.0" layoutY="330.0" prefHeight="18.0" prefWidth="150.0" text="da a" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="Cambria" size="14.0" />
+               </font></Label>
+            <ChoiceBox fx:id="cb_region" layoutX="87.0" layoutY="193.0" prefHeight="26.0" prefWidth="95.0" />
+            <Label layoutX="18.0" layoutY="197.0" text="Regione:" textFill="WHITE">
+               <font>
+                  <Font name="Cambria" size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="167.0" text="Cerca:" textFill="WHITE">
+               <font>
+                  <Font name="Cambria" size="14.0" />
+               </font>
+            </Label>
+            <TextField fx:id="tf_wine" layoutX="60.0" layoutY="163.0" prefHeight="26.0" prefWidth="163.0" text="" />
+            <Button fx:id="button_invio" layoutX="69.0" layoutY="360.0" mnemonicParsing="false" text="Invio">
+               <font>
+                  <Font name="Cambria Bold" size="14.0" />
+               </font>
+            </Button>
+            <Slider fx:id="sd_prizeMin" layoutX="12.0" layoutY="250.0" prefHeight="14.0" prefWidth="150.0" />
+            <Label layoutX="14.0" layoutY="224.0" text="Prezzo (min):" textFill="WHITE">
+               <font>
+                  <Font name="Cambria" size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="278.0" text="Prezzo (max):" textFill="WHITE">
+               <font>
+                  <Font name="Cambria" size="14.0" />
+               </font>
+            </Label>
+            <Slider fx:id="sd_prizeMax" layoutX="12.0" layoutY="304.0" prefHeight="14.0" prefWidth="150.0" />
+            <Label fx:id="fx_Label" layoutX="9.0" layoutY="14.0" textFill="WHITE">
+               <font>
+                  <Font name="Cambria" size="14.0" />
+               </font>
+            </Label>
+            <Label fx:id="fx_Select" layoutX="19.0" layoutY="114.0" prefHeight="18.0" prefWidth="203.0" textFill="WHITE" />
+            <ImageView fx:id="button_cart" fitHeight="66.0" fitWidth="64.0" layoutX="15.0" layoutY="43.0" onMouseClicked="#getCart" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../com/example/onlinewineshop/Controller/imgcart1.png" />
+               </image>
+            </ImageView>
+            <Label fx:id="fx_NumArt" layoutX="79.0" layoutY="66.0" prefHeight="18.0" prefWidth="112.0" text="n° articoli: " textFill="WHITE">
+               <font>
+                  <Font name="Cambria Italic" size="14.0" />
+               </font>
+            </Label>
+            <Label fx:id="fx_CostoTot" layoutX="23.0" layoutY="105.0" prefHeight="18.0" prefWidth="163.0" text="costo carrello:" textFill="WHITE">
+               <font>
+                  <Font name="Cambria Italic" size="14.0" />
+               </font>
+            </Label>
          </children></AnchorPane>
       <AnchorPane prefHeight="400.0" prefWidth="505.0">
          <children>
-            <TableView fx:id="table_Wine" prefHeight="500.0" prefWidth="774.0">
+            <TableView fx:id="table_Wine" onMouseClicked="#getSelected" prefHeight="500.0" prefWidth="774.0">
               <columns>
                 <TableColumn fx:id="col_Nome" prefWidth="300.00" text="Nome" />
                 <TableColumn fx:id="col_Vintage" prefWidth="50.00" text="Vintage" />
