@@ -292,6 +292,7 @@ public class EmpAdminController implements Initializable {
     }
     public void setUserInformation(String username, int isAdmin){
         button_Emp.setDisable(CheckAdmin == 0);
+        CheckAdmin=isAdmin;
         UserName.setText(username);
         fx_Label.setText("Benvenuto " + UserName.getText() + "!");
     }

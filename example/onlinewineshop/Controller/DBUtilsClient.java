@@ -348,7 +348,7 @@ public class DBUtilsClient {
                         order.setPrice(prezzo*order.getQta());
                         order.toStringOrder();
 
-                        CartController.getOrders().add(new Order(order.getWineOrder(),order.getQta(),order.getPrice(),order.getUsername()));
+                        CartController.getOrders().add(new Order(order.getUsername(),order.getWineOrder(),order.getQta(),order.getPrice()));
                         System.out.println(order.getUsername()+" ha aggiunto al carrello!");
                         Alert alert = new Alert(Alert.AlertType.CONFIRMATION); // create an alert
                         alert.setContentText("aggiunto al carrello!");
@@ -461,5 +461,65 @@ public class DBUtilsClient {
         }
 
         return null;
+    }
+
+    public static void sendOrder(ObservableList<Order> listO, ActionEvent event, String username) {
+        for(int i=0;i<listO.size();i++){
+            System.out.println(listO.get(i).getWineOrder());
+        }
+        Connection connection = null; // initialize the connection
+        PreparedStatement preparedStatement = null; // check if the user already exists
+        ResultSet resultSet = null;
+        try{
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/javafx wine","root",""); // connect to the database
+            System.out.println(listO.size());
+            for(Order o : listO){
+                System.out.println(o.getWineOrder()+" "+o.getQta()+" "+o.getPrice()+" "+o.getUsername());
+                preparedStatement = connection.prepareStatement("INSERT INTO orders (user, wine, qta, price) VALUES (?,?,?,?)"); // select all the wines
+                preparedStatement.setString(1,o.getUsername());
+                preparedStatement.setString(2,o.getWineOrder());
+                preparedStatement.setInt(3,o.getQta());
+                preparedStatement.setFloat(4,o.getPrice());
+
+                preparedStatement.executeUpdate();
+                /*
+                preparedStatement = connection.prepareStatement("UPDATE wine SET quantita = quantita - ? WHERE nome = ?");
+                preparedStatement.setInt(1,o.getQta());
+                preparedStatement.setString(2,o.getWineOrder());
+                preparedStatement.executeUpdate();
+                */
+            }
+
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION); // create an alert
+            alert.setContentText("ordine inviato!");
+            alert.show();
+            changeScene(event,"Logged in!","logged-in.fxml",username);
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+        finally {
+            if(resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(preparedStatement != null){
+                try{
+                    preparedStatement.close();
+                }catch (SQLException e){
+                    e.printStackTrace();
+                }
+            }
+            if(connection != null){
+                try{
+                    connection.close();
+                }catch (SQLException e){
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

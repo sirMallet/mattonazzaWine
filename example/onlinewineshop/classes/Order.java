@@ -14,7 +14,7 @@ public class Order {
 
     }
 
-    public Order(String wineOrder, int qta, float price, String username){
+    public Order(String username,String wineOrder, int qta, float price ){
         this.wineOrder = wineOrder;
         this.qta = qta;
         this.price = price;

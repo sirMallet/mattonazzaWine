@@ -28,6 +28,8 @@ public class CartController implements Initializable {
     @FXML
     private Button button_Back;
     @FXML
+    private Button button_Order;
+    @FXML
     private Label fx_Label;
     @FXML
     private Label fx_NumArt;
@@ -48,6 +50,7 @@ public class CartController implements Initializable {
     Order orderSelected = null;
     Integer index;
     static ObservableList<Order> listO = FXCollections.observableArrayList();
+    static ObservableList<Order> listOTemp = FXCollections.observableArrayList();
     @FXML
     void getSelected(MouseEvent event) {
         try{
@@ -108,9 +111,9 @@ public class CartController implements Initializable {
         col_Quantity.setCellValueFactory(new PropertyValueFactory<Order, Integer>("qta"));
         col_Prezzo.setCellValueFactory(new PropertyValueFactory<Order, Float>("price"));
         // prendere i dati dal database
-
         // aggiungere la lista alla tabella
         table_Wine.setItems(listO);
+
         button_Logout.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -123,7 +126,21 @@ public class CartController implements Initializable {
                 DBUtilsClient.changeScene(event,"Logged in!","logged-in.fxml",fx_Label.getText());
             }
         });
+        button_Order.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                // chiamo una funzione che invia ordine con la lista di ordini
 
+                listOTemp = listO;
+                DBUtilsClient.sendOrder(listOTemp,event,fx_Label.getText());
+                //stampo la lista listO
+
+                listO.clear();
+
+
+
+            }
+        });
     }
     public void setUserName(String UserName){
         System.out.println(UserName);
