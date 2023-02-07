@@ -42,12 +42,12 @@
                   <Font name="Cambria Bold" size="14.0" />
                </font>
             </Label>
-            <ImageView fx:id="button_Accept" fitHeight="27.0" fitWidth="34.0" layoutX="66.0" layoutY="316.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="button_Accept" fitHeight="27.0" fitWidth="34.0" layoutX="66.0" layoutY="316.0" onMouseClicked="#Accept" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../../com/example/onlinewineshop/Controller/imgTick1.png" />
                </image>
             </ImageView>
-            <ImageView fx:id="button_Delete" fitHeight="28.0" fitWidth="27.0" layoutX="130.0" layoutY="316.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="button_Delete" fitHeight="28.0" fitWidth="27.0" layoutX="130.0" layoutY="316.0" onMouseClicked="#Delete" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../../com/example/onlinewineshop/Controller/imgCross1.png" />
                </image>

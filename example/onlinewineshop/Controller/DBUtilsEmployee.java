@@ -84,7 +84,7 @@ public class DBUtilsEmployee {
                         preparedStatement.execute(); // execute the query
                     }
                     case "Order" -> {
-                        preparedStatement = connection.prepareStatement("DELETE FROM orders WHERE username = ?"); // check if the user already exists
+                        preparedStatement = connection.prepareStatement("DELETE FROM orders WHERE user = ?"); // check if the user already exists
                         preparedStatement.setString(1, identifier); // set the username
                         preparedStatement.execute(); // execute the query
                     }
@@ -295,6 +295,51 @@ public class DBUtilsEmployee {
 
         return null;
     }
+    public static ObservableList<Order> ViewListOrder(){
+        Connection connection = null; // initialize the connection
+        PreparedStatement preparedStatement = null; // check if the user already exists
+        ResultSet resultSet = null;
+        ObservableList<Order> Orderlist = FXCollections.observableArrayList();
+        try{
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/javafx wine","root",""); // connect to the database
+            preparedStatement = connection.prepareStatement("SELECT user,SUM(qta) as qta,SUM(price) as price FROM orders group by user;"); // check if the user already exists
+
+            resultSet = preparedStatement.executeQuery(); // execute the query
+            while (resultSet.next()) {
+                Orderlist.add(new Order(resultSet.getString("user"),resultSet.getInt("qta"),resultSet.getFloat("price")));
+            }
+            return Orderlist;
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+        finally {
+            if(resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(preparedStatement != null){
+                try{
+                    preparedStatement.close();
+                }catch (SQLException e){
+                    e.printStackTrace();
+                }
+            }
+            if(connection != null){
+                try{
+                    connection.close();
+                }catch (SQLException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return null;
+    }
+
     public static ObservableList<Employee> ViewListEmployee(){
         Connection connection = null; // initialize the connection
         PreparedStatement preparedStatement = null; // check if the user already exists

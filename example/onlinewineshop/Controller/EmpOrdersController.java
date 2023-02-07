@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 
 
@@ -30,8 +31,13 @@ public class EmpOrdersController implements Initializable {
     private Button button_Clients;
     @FXML
     private Button button_Orders;
+    
     @FXML
     private Button button_Logout;
+    @FXML
+    private ImageView button_Accept;
+    @FXML
+    private ImageView button_Delete;
     @FXML
     private Label fx_Label;
     @FXML
@@ -62,7 +68,21 @@ public class EmpOrdersController implements Initializable {
         tf_Qta.setText(Col_Qta.getCellData(index).toString());
         tf_Prezzo.setText(Col_Prezzo.getCellData(index).toString());
     }
+    @FXML
+    public void Delete(){
+        try{
+            String NomeUser = tf_UserName.getText();
+            DBUtilsEmployee.Delete(NomeUser,"Order");
+            table_Orders.refresh();
+            listO = DBUtilsEmployee.ViewListOrder();
+            // aggiungere la lista alla tabella
+            table_Orders.setItems(listO);
 
+        }
+        catch(Exception e){
+        }
+
+    }
     @Override
     public void initialize(java.net.URL location, java.util.ResourceBundle resources) {
 
@@ -73,9 +93,9 @@ public class EmpOrdersController implements Initializable {
         // set the table view with the wine list from the database (DBUtils) and the columns of the table view (Wine class)
         Col_UserName.setCellValueFactory(new PropertyValueFactory<Order, String>("username"));
         Col_Qta.setCellValueFactory(new PropertyValueFactory<Order, Integer>("qta"));
-        Col_Prezzo.setCellValueFactory(new PropertyValueFactory<Order, Float>("prezzo"));
+        Col_Prezzo.setCellValueFactory(new PropertyValueFactory<Order, Float>("price"));
 
-        listO = DBUtilsEmployee.ViewListOrders();
+        listO = DBUtilsEmployee.ViewListOrder();
         // aggiungere la lista alla tabella
         table_Orders.setItems(listO);
 
@@ -117,9 +137,8 @@ public class EmpOrdersController implements Initializable {
         fx_Label.setText("Benvenuto " + UserName.getText() + "!");
     }
 
-
-
-
-
+    @FXML
+    public void Accept(MouseEvent mouseEvent) {
+    }
 }
 

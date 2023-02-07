@@ -11,6 +11,8 @@ import javafx.event.EventHandler;
 
 
 public class LoginController implements Initializable {
+    private final String hostName = "localhost";
+    private final int portNumber = 4445;
     @FXML
     private TextField tf_UserName;
     @FXML
@@ -68,8 +70,7 @@ public class LoginController implements Initializable {
             public void handle(ActionEvent event) {
                 if(flag==0){
                     DBUtilsClient.logInUser(event,tf_UserName.getText(),tf_password.getText()); // get the username and password
-
-                }else{
+                    }else{
                     DBUtilsEmployee.logInDip(event,tf_Nome.getText(),tf_UserName.getText(),tf_password.getText()); // get the username and password
 
                 }
