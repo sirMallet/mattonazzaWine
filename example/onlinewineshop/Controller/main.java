@@ -12,18 +12,20 @@ public class main extends Application {
     DataInputStream fromServer = null;
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("login.fxml"));
-        primaryStage.setTitle("Online Wine Shop");
-        primaryStage.setScene(new Scene(root, 600, 400));
-        primaryStage.show();
+
         // Socket nel try
         try{
             Socket socket = new Socket("localhost", 4445);
             fromServer = new DataInputStream(socket.getInputStream());
             toServer = new DataOutputStream(socket.getOutputStream());
+            Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("login.fxml"));
+            primaryStage.setTitle("Online Wine Shop");
+            primaryStage.setScene(new Scene(root, 600, 400));
+            primaryStage.show();
         }catch (Exception e) {
             e.printStackTrace();
         }
+        toServer.flush();
     }
     public static void main(String[] args) {
 

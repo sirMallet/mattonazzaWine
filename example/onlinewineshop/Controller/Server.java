@@ -10,75 +10,46 @@ import javafx.stage.*;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.net.InetAddress;
+import java.io.IOException;
+
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Date;
 
-public class Server  extends Application {
-    private int clientNo = 0;
-    private TextArea ta = new TextArea();
+public class Server {
+    private ServerSocket serverSocket;
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        ta.setEditable(false);
-
-        // scrollpane with text area in it to show the text area
-        ScrollPane scroll = new ScrollPane(ta);
-        Scene scene = new Scene(scroll, 450, 200);
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("Server");
-        primaryStage.show();
-        new Thread(() -> {
-            try{
-                ServerSocket serverSocket = new ServerSocket(4445);
-                Platform.runLater(() -> {
-                    ta.appendText("Server started at " + new Date() + '\n');
-                });
-                while (true){
-                    Socket socket = serverSocket.accept();
-                    clientNo++;
-                    Platform.runLater(() -> {
-
-                        InetAddress inetAddress = socket.getInetAddress();
-                        ta.appendText("Starting thread for client " + clientNo + " at " + new Date() + '\n');
-                        ta.appendText("Client " + clientNo + "'s IP Address is " + socket.getInetAddress() + '\n');
-                    });
-                    new Thread( new ThreadClient(socket)).start();
-                }
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }).start();
-
+    // costruttore
+    public Server(ServerSocket serverSocket) {
+        this.serverSocket = serverSocket;
     }
-    class ThreadClient implements Runnable{
-        private Socket socket;
-        public ThreadClient(Socket socket){
-            this.socket = socket;
-        }
-        @Override
-        public void run() {
-            try{
-                DataInputStream fromClient = new DataInputStream(socket.getInputStream());
-                DataOutputStream toClient = new DataOutputStream(socket.getOutputStream());
-                while (true){
-                    Platform.runLater(() -> {
-                        try{
-                            ta.appendText("Client " + clientNo + " says: " + fromClient.readUTF() + '\n');
+    public void startServer(){
+        try{
+            while(!serverSocket.isClosed()){
+                Socket socket = serverSocket.accept();
+                System.out.println("Client connesso");
+                ClientHandler clientHandler = new ClientHandler(socket);
 
-                        }catch (Exception e){
-                            e.printStackTrace();}
-                    });
-                }
-            }catch (Exception e){
-                e.printStackTrace();
+                Thread thread = new Thread(clientHandler);
+                thread.start();
             }
+        }catch (IOException e){
+            e.printStackTrace();
         }
     }
-    public static void main(String[] args) {
-        Application.launch(args);
+    public void closeServerSocket(){
+        try{
+            if(serverSocket != null){
+                serverSocket.close();
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+        }
     }
+    public static void main(String[] args) throws IOException {
+        ServerSocket serverSocket = new ServerSocket(4445);
+        Server server = new Server(serverSocket);
+        server.startServer();
 
-
+    }
 }
