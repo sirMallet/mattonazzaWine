@@ -51,6 +51,23 @@ public class CartController implements Initializable {
     Integer index;
     static ObservableList<Order> listO = FXCollections.observableArrayList();
     static ObservableList<Order> listOTemp = FXCollections.observableArrayList();
+    int flag =0;
+    UserInformation ui;
+    @FXML
+    private void receiveData(MouseEvent event) {
+        if( flag == 0) {
+            // Step 1
+            Node node = (Node) event.getSource();
+            Stage stage = (Stage) node.getScene().getWindow();
+            // Step 2
+            ui = (UserInformation) stage.getUserData();
+
+            System.out.println("Username: " + ui.getUsername());
+            fx_Label.setText("Benvenuto " + ui.getUsername() + "!");
+
+            flag=1;
+        }
+    }
     @FXML
     void getSelected(MouseEvent event) {
         try{
@@ -117,71 +134,56 @@ public class CartController implements Initializable {
         button_Logout.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtilsClient.changeScene(event,"Login","Login.fxml",null);
+                ui.setUsername(null);
+                ClientSession.changeScene(event,"Login","Login.fxml",ui);
             }
         });
         button_Back.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtilsClient.changeScene(event,"Logged in!","logged-in.fxml",fx_Label.getText());
+                ClientSession.changeScene(event,"Logged in!","logged-in.fxml",ui);
             }
         });
         button_Order.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 // chiamo una funzione che invia ordine con la lista di ordini
-
                 listOTemp = listO;
-                DBUtilsClient.sendOrder(listOTemp,event,fx_Label.getText());
-                //stampo la lista listO
+                String listOrderWine = "";
+                for (Order order : listOTemp) {
+                    listOrderWine = listOrderWine + order.getUsername() + "/" + order.getWineOrder()+ "/" +order.getQta()+ "/"+order.getPrice()+ ";";
+                }
+                try {
+                    ui.getClientSession().sendMessage("SendOrder"+"|"+listOrderWine);
+                    ui.getClientSession().listenForMessage();
+                    Thread.sleep(250);
+                    String messageFromServer = ui.getClientSession().getmsg();
+                    if(messageFromServer.equals("true")){
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION); // create an alert
+                        alert.setContentText("ordine inviato!");
+                        alert.show();
+                    }
+                    else{
+                        Alert alert = new Alert(Alert.AlertType.ERROR); // create an alert
+                        alert.setContentText("errore nell'invio dell'ordine!");
+                        alert.show();
+                    }
+                } catch (IOException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
+
+
+                ClientSession.changeScene(event,"Logged in!","logged-in.fxml",ui);
 
                 listO.clear();
-
-
-
             }
         });
-    }
-    public void setUserName(String UserName){
-        System.out.println(UserName);
-        fx_Label.setText(UserName);
     }
     public static ObservableList<Order> getOrders(){
         return listO;
     }
-    public static void changeSceneMouse(MouseEvent event, String title, String fxmlFile, String username){
-        Parent root = null;
-        if(username!= null){
-            try {
-                FXMLLoader loader = new FXMLLoader(DBUtilsClient.class.getResource(fxmlFile));    //carico il file fxml
-                root = loader.load(); // load the fxml file
-                OrderController orderController = loader.getController(); // get the controller
-                orderController.setUserName(username);
 
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        else    {
-            try{
-                root = FXMLLoader.load(CartController.class.getResource(fxmlFile));
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        Stage stage = (Stage)((Node) event.getSource()).getScene().getWindow(); // get the stage from the event source (the button) and get the scene from the stage and get the window from the scene
-        stage.setTitle(title);
-        if(title.equals("Logged in!")){
-            stage.setScene(new Scene(root,1000,500)); // set the scene
-        }
-        else{
-            stage.setScene(new Scene(root,600,400)); // set the scene
-        }
-
-        stage.show();
-    }
     public void setCart(int count,float prize){
         fx_NumArt.setText("n° articoli: "+count);
         fx_CostoTot.setText("Costo totale: " + prize);

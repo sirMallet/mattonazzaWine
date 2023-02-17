@@ -1,6 +1,8 @@
 package com.example.onlinewineshop.Controller;
 import com.example.onlinewineshop.classes.*;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -9,8 +11,8 @@ import javafx.scene.control.TextField;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-
-import java.sql.*;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 
 
 public class OrderController implements Initializable {
@@ -28,98 +30,85 @@ public class OrderController implements Initializable {
     private Label fx_TitleWine;
     @FXML
     private Label fx_qtaRimasta;
-    private Wine wine1;
-    private Order order1;
+    private Wine WineSelected;
+
+    int flag = 0;
+    public UserInformation ui;
+    @FXML
+    private void receiveData(MouseEvent event) {
+        if(flag == 0) {
+            // Step 1
+            Node node = (Node) event.getSource();
+            Stage stage = (Stage) node.getScene().getWindow();
+            // Step 2
+            ui = (UserInformation) stage.getUserData();
+
+            System.out.println("Username: " + ui.getUsername());
+            fx_username.setText("Benvenuto " + ui.getUsername() + "!");
+
+            flag=1;
+        }
+    }
     @Override
     public void initialize(java.net.URL location, java.util.ResourceBundle resources) {
-        Wine wine = new Wine();
+
         Order order = new Order();
         button_Logout.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtilsClient.changeScene(event,"Login","Login.fxml",null);
+                ui.setUsername(null);
+                ClientSession.changeScene(event,"Login","Login.fxml",ui);
             }
         });
         button_Back.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtilsClient.changeScene(event,"Logged in!","logged-in.fxml",fx_username.getText());
+                ClientSession.changeScene(event,"Logged in!","logged-in.fxml",ui);
             }
         });
         button_Cart.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                order.setWineOrder(wine1.getNome().toString());
-                System.out.println("Ordine: "+wine1.getNome());
+                order.setWineOrder(WineSelected.getNome());
+                System.out.println("Ordine: "+ WineSelected.getNome());
                 order.setQta(Integer.parseInt(fx_qta.getText()));
-                order.setPrice(wine1.getPrezzo());
-                order.setUsername(fx_username.getText());
-                DBUtilsClient.Order(event,order);
+                order.setPrice(WineSelected.getPrezzo());
+                order.setUsername(ui.getUsername());
+
+                if(order.getQta()>= WineSelected.getQta()){
+
+                    System.out.println("quantità non superiore al magazzino!");
+                    Alert alert = new Alert(Alert.AlertType.ERROR); // create an alert
+                    alert.setContentText("quantità non presente in magazzino!");
+                    alert.show();
+                }
+                else{
+                    order.setPrice(WineSelected.getPrezzo()*order.getQta());
+                    order.toStringOrder();
+
+                    CartController.getOrders().add(new Order(order.getUsername(),order.getWineOrder(),order.getQta(),order.getPrice()));
+                    System.out.println(order.getUsername()+" ha aggiunto al carrello!");
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION); // create an alert
+                    alert.setContentText("aggiunto al carrello!");
+                    alert.show();
+
+                }
+                ClientSession.changeScene(event,"Logged in!","logged-in.fxml",ui);
 
             }
         });
 
     }
-    public void setUserName(String UserName){
-        System.out.println(UserName);
-        fx_username.setText(UserName);
-    }
+
     public void setWine(Wine wine){
-        wine1 = wine;
+        WineSelected = wine;
         fx_TitleWine.setText(wine.getNome());
-        wine.setQta(QtaPrecisa(wine.getNome()));
         fx_qtaRimasta.setText("n° prodotti rimasti: "+wine.getQta());
     }
-    public int QtaPrecisa(String nome){
-        int qta = 0;
-            Connection connection = null; // initialize the connection
-            PreparedStatement preparedStatement = null; // check if the user already exists
-            ResultSet resultSet = null;
-            try{
-                connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/javafx wine","root",""); // connect to the database
-                preparedStatement = connection.prepareStatement("SELECT quantita FROM wine WHERE Nome LIKE CONCAT( ?,'%')"); // check if the user already exists
-                preparedStatement.setString(1,nome); // set the username
 
-                resultSet = preparedStatement.executeQuery(); // execute the query
-                if(!resultSet.isBeforeFirst()){
-                    System.out.println("No data");
-                }
-                else{
-                    while(resultSet.next()){
-                        qta = resultSet.getInt("quantita");
-                        return qta;
-                    }
-                }
 
-            }catch (SQLException e ){
-                e.printStackTrace();
-            }
-            finally {
-                if(resultSet != null) {
-                    try {
-                        resultSet.close();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if(preparedStatement != null){
-                    try{
-                        preparedStatement.close();
-                    }catch (SQLException e){
-                        e.printStackTrace();
-                    }
-                }
-                if(connection != null){
-                    try{
-                        connection.close();
-                    }catch (SQLException e){
-                        e.printStackTrace();
-                    }
-                }
-            }
-            return qta;
-        }
-    }
+
+}
 
 
 

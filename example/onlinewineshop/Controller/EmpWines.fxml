@@ -7,7 +7,7 @@
 
 <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="1150.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.onlinewineshop.Controller.EmpWinesController">
     <children>
-        <AnchorPane prefHeight="400.0" prefWidth="240.0" style="-fx-background-color: #75151E;">
+        <AnchorPane onMouseMoved="#receiveData" prefHeight="400.0" prefWidth="240.0" style="-fx-background-color: #75151E;">
             <children>
                 <Button fx:id="button_Logout" layoutX="82.0" layoutY="458.0" mnemonicParsing="false" text="Logout">
                     <font>
@@ -103,9 +103,9 @@
                 </Button>
             </children></AnchorPane>
 
-        <AnchorPane prefHeight="400.0" prefWidth="505.0">
+        <AnchorPane onMouseMoved="#receiveData" prefHeight="400.0" prefWidth="505.0">
             <children>
-                <TableView fx:id="table_Wine" onMouseClicked="#getSelected" prefHeight="500.0" prefWidth="774.0">
+                <TableView fx:id="table_Wine" onMouseClicked="#getSelected" onMouseMoved="#receiveData" prefHeight="500.0" prefWidth="774.0">
                     <columns>
                         <TableColumn fx:id="col_Nome" prefWidth="300.00" text="Nome" />
                         <TableColumn fx:id="col_Vintage" prefWidth="50.00" text="Vintage" />

@@ -1,16 +1,8 @@
 package com.example.onlinewineshop.Controller;
 
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.* ;
-import javafx.stage.*;
 
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -18,6 +10,8 @@ import java.util.Date;
 
 public class Server {
     private ServerSocket serverSocket;
+    private Socket socket;
+
 
     // costruttore
     public Server(ServerSocket serverSocket) {
@@ -28,15 +22,33 @@ public class Server {
             while(!serverSocket.isClosed()){
                 Socket socket = serverSocket.accept();
                 System.out.println("Client connesso");
-                ClientHandler clientHandler = new ClientHandler(socket);
+                // qui posso decidere che tipo di client sono collegati, se DBEmployee o DBClient
+                DBUtilsClient dbUtilsClient = new DBUtilsClient(socket);
 
-                Thread thread = new Thread(clientHandler);
+                Thread thread = new Thread(dbUtilsClient);
                 thread.start();
             }
         }catch (IOException e){
             e.printStackTrace();
         }
     }
+
+    private void closeEverything(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
+        try{
+            if(socket != null){
+                socket.close();
+            }
+            if(bufferedReader != null){
+                bufferedReader.close();
+            }
+            if(bufferedWriter != null){
+                bufferedWriter.close();
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
     public void closeServerSocket(){
         try{
             if(serverSocket != null){

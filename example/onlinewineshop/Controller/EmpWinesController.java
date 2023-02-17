@@ -6,11 +6,14 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.*;
 
 
@@ -232,7 +235,34 @@ public class EmpWinesController implements Initializable {
 
 
     }
+    public EmployeInformation ei;
+    int flag=0;
+    @FXML
+    private void receiveData(MouseEvent event) {
+        if(flag == 0) {
+            // Step 1
+            Node node = (Node) event.getSource();
+            Stage stage = (Stage) node.getScene().getWindow();
+            // Step 2
+            ei = (EmployeInformation) stage.getUserData();
+            // Step 3
+            button_Emp.setDisable(ei.getAdmin()==0);
+            UserName.setText(ei.getNome());
+            fx_Label.setText("Benvenuto " + ei.getNome()+ "!");
 
+            //try {
+                //ei.getClientSession().sendMessage("ViewList"+"|||0|1000");
+                //ei.getClientSession().listenForMessage();
+                //Thread.sleep(250);
+                //String messageFromServer = ui.getClientSession().getmsg();
+                //listW = returnList(messageFromServer);
+                //table_Wine.setItems(listW);
+                //} catch (IOException | InterruptedException e) {
+                //throw new RuntimeException(e);
+            //}
+            //flag=1;
+        }
+    }
     @Override
     public void initialize(java.net.URL location, java.util.ResourceBundle resources) {
 
@@ -279,12 +309,6 @@ public class EmpWinesController implements Initializable {
             }
         });
 
-    }
-    public void setUserInformation(String username, int isAdmin){
-        CheckAdmin = isAdmin;
-        button_Emp.setDisable(CheckAdmin == 0);
-        UserName.setText(username);
-        fx_Label.setText("Benvenuto " + UserName.getText() + "!");
     }
 
 }

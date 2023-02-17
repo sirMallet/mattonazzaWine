@@ -26,7 +26,6 @@ public class DBUtilsEmployee {
                     switch (fxmlFile) {
                         case "EmpWines.fxml" -> {
                             EmpWinesController empWinesController = loader.getController(); // get the controller
-                            empWinesController.setUserInformation(username, isAdmin); // set the username;
 
                         }
                         case "EmpClients.fxml" -> {

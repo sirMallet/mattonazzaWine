@@ -7,7 +7,7 @@
 
 <HBox prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.onlinewineshop.Controller.CartController">
         <children>
-            <AnchorPane prefHeight="400.0" prefWidth="240.0" style="-fx-background-color: #75151E;">
+            <AnchorPane onMouseMoved="#receiveData" prefHeight="400.0" prefWidth="240.0" style="-fx-background-color: #75151E;">
                 <children>
                     <Button fx:id="button_Logout" layoutX="71.0" layoutY="450.0" mnemonicParsing="false" text="Logout">
                         <font>
@@ -63,9 +63,9 @@
             <TextField fx:id="fx_Qta" layoutX="49.0" layoutY="285.0" prefHeight="26.0" prefWidth="112.0" />
             <TextField fx:id="fx_NomeWine" layoutX="9.0" layoutY="250.0" prefHeight="26.0" prefWidth="203.0" />
                 </children></AnchorPane>
-            <AnchorPane prefHeight="400.0" prefWidth="505.0">
+            <AnchorPane onMouseMoved="#receiveData" prefHeight="400.0" prefWidth="505.0">
                 <children>
-                    <TableView fx:id="table_Wine" onMouseClicked="#getSelected" prefHeight="500.0" prefWidth="774.0">
+                    <TableView fx:id="table_Wine" onMouseClicked="#getSelected" onMouseMoved="#receiveData" prefHeight="500.0" prefWidth="774.0">
                         <columns>
                             <TableColumn fx:id="col_Nome" prefWidth="450.00" text="Nome" />
                             <TableColumn fx:id="col_Quantity" prefWidth="160.00" text="Qta" />

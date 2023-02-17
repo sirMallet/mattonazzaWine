@@ -5,19 +5,16 @@ import javafx.stage.Stage;
 import javafx.scene.Scene;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
 
 public class main extends Application {
-    DataOutputStream toServer = null;
-    DataInputStream fromServer = null;
+
     @Override
     public void start(Stage primaryStage) throws Exception {
 
         // Socket nel try
         try{
-            Socket socket = new Socket("localhost", 4445);
-            fromServer = new DataInputStream(socket.getInputStream());
-            toServer = new DataOutputStream(socket.getOutputStream());
             Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("login.fxml"));
             primaryStage.setTitle("Online Wine Shop");
             primaryStage.setScene(new Scene(root, 600, 400));
@@ -25,11 +22,11 @@ public class main extends Application {
         }catch (Exception e) {
             e.printStackTrace();
         }
-        toServer.flush();
-    }
-    public static void main(String[] args) {
 
-        Application.launch(args);
+    }
+    public static void main(String[] args) throws IOException {
+        launch(args);
+
     }
 }
 

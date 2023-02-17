@@ -7,12 +7,101 @@ import javafx.scene.*;
 import javafx.scene.control.Alert;
 import javafx.stage.*;
 import javafx.scene.input.MouseEvent;
+
+import java.io.*;
+import java.net.Socket;
 import java.sql.*;
-import java.io.IOException;
+
 import com.example.onlinewineshop.classes.*;
 
-public class DBUtilsClient {
+public class DBUtilsClient implements Runnable {
+    // inserisco le informazioni necessarie per ascoltare il client
+    private Socket socket;
+    private BufferedReader bufferedReader;
+    private BufferedWriter bufferedWriter;
+    public DBUtilsClient(Socket socket){
+        try{
+            this.socket = socket;
+            this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 
+
+        } catch (IOException e) {
+            closeEverything(socket, bufferedReader, bufferedWriter);
+        }
+    }
+    public void closeEverything(Socket socket, BufferedReader bufferReader, BufferedWriter bufferWriter){
+
+        try{
+            if(bufferReader != null){
+                bufferReader.close();
+            }
+            if(bufferWriter != null){
+                bufferWriter.close();
+            }
+            if(socket != null){
+                socket.close();
+            }
+
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+    public void sendMessage(String messageToSend) throws IOException {
+        bufferedWriter.write(messageToSend);
+        bufferedWriter.newLine();
+        bufferedWriter.flush();
+    }
+    @Override
+    public void run() {
+        String messageFromClient;
+        String listWine="";
+        while(socket.isConnected()){
+            try{
+                messageFromClient = bufferedReader.readLine();
+                System.out.println(messageFromClient);
+                String[] message = messageFromClient.split("[|]"); //serve per dividere la stringa in più parti
+                switch (message[0]) {
+                    case "logInUser" -> {
+                        String result = DBUtilsClient.logInUser(message[1], message[2]) ? "true" : "false";
+                        sendMessage(result);
+                    }
+                    case "logInDip" -> {
+                        String result = DBUtilsClient.logInDip(message[1], message[2],message[3]);
+                        sendMessage(result);
+                    }
+                    case "ViewList" -> {
+                        ObservableList<Wine> list;
+                        if(message[1].equals("") && message[2].equals("") && Integer.parseInt(message[3])==0 &&Integer.parseInt(message[4])==1000){
+                            list = DBUtilsClient.ViewList("","", 0, 1000);
+                        }
+                        else{
+                            list = DBUtilsClient.ViewList(message[1], message[2], Integer.parseInt(message[3]), Integer.parseInt(message[4]));
+                        }
+                        assert list != null;
+                        listWine="";
+                        for (Wine wine : list) {
+                            listWine = listWine + wine.getNome() + "|" + wine.getRegion() + "|" + wine.getVintage() + "|" + wine.getVarietal() + "|" + wine.getValutazione() + "|" + wine.getPrezzo() + "|" + wine.getQta() + ";";
+
+                        }
+                        sendMessage(listWine);
+                    }
+                    case "SendOrder" -> {
+                        ObservableList<Order> listOrderWine = FXCollections.observableArrayList();
+                        String[] tmp = message[1].split(";");
+                        for(String i: tmp){
+                            String[] msg = i.split("[/]");
+                            listOrderWine.add(new Order(msg[0],msg[1],Integer.parseInt(msg[2]),Float.parseFloat(msg[3])));
+                        }
+                        String result = DBUtilsClient.sendOrder(listOrderWine) ? "true" : "false";
+                        sendMessage(result);}
+                }
+            }catch (IOException e){
+                closeEverything(socket, bufferedReader, bufferedWriter);
+                break;
+            }
+        }
+    }
     // Database credentials (change it to your own)
     public static void changeScene(ActionEvent event,String title,String fxmlFile, String username){
         Parent root = null;
@@ -21,7 +110,7 @@ public class DBUtilsClient {
                 FXMLLoader loader = new FXMLLoader(DBUtilsClient.class.getResource(fxmlFile));    //carico il file fxml
                 root = loader.load(); // load the fxml file
                 LoggedInController loggedInController = loader.getController(); // get the controller
-                loggedInController.setUserInformation(username); // set the user information
+
                 loggedInController.setCart(OrderManagement.sumQta( CartController.getOrders()),OrderManagement.sumPrice( CartController.getOrders()));
             } catch (IOException e) {
                 e.printStackTrace();
@@ -46,39 +135,7 @@ public class DBUtilsClient {
 
         stage.show();
     }
-    public static void changeSceneMouse(MouseEvent event,String title,String fxmlFile, Wine wine,String username){
-        Parent root = null;
-        if(username!= null){
-            try {
-                FXMLLoader loader = new FXMLLoader(DBUtilsClient.class.getResource(fxmlFile));    //carico il file fxml
-                root = loader.load(); // load the fxml file
-                OrderController orderController = loader.getController(); // get the controller
-                orderController.setUserName(username);
-                orderController.setWine(wine);
 
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        else    {
-            try{
-                root = FXMLLoader.load(DBUtilsClient.class.getResource(fxmlFile));
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        Stage stage = (Stage)((Node) event.getSource()).getScene().getWindow(); // get the stage from the event source (the button) and get the scene from the stage and get the window from the scene
-        stage.setTitle(title);
-        if(title.equals("Logged in!")){
-            stage.setScene(new Scene(root,1000,500)); // set the scene
-        }
-        else{
-            stage.setScene(new Scene(root,600,400)); // set the scene
-        }
-
-        stage.show();
-    }
     public static void changeSceneCart(MouseEvent event,String title,String fxmlFile,String username){
         Parent root = null;
         if(username!= null){
@@ -86,8 +143,6 @@ public class DBUtilsClient {
                 FXMLLoader loader = new FXMLLoader(DBUtilsClient.class.getResource(fxmlFile));    //carico il file fxml
                 root = loader.load(); // load the fxml file
                 CartController CartController = loader.getController(); // get the controller
-                CartController.setUserName(username);
-
                 CartController.setCart(OrderManagement.sumQta( CartController.getOrders()),OrderManagement.sumPrice( CartController.getOrders()));
             } catch (IOException e) {
                 e.printStackTrace();
@@ -187,7 +242,7 @@ public class DBUtilsClient {
         }
 
     }
-    public static void logInUser(ActionEvent event, String username,String password){
+    public static boolean logInUser(String username,String password){
         Connection connection = null; // initialize the connection
         PreparedStatement preparedStatement = null; // check if the user already exists
         ResultSet resultSet = null;
@@ -197,23 +252,25 @@ public class DBUtilsClient {
             preparedStatement.setString(1,username); // set the username
             resultSet = preparedStatement.executeQuery(); // execute the query
             if(!resultSet.isBeforeFirst()){
-                System.out.println("User not found in the database!");
-                Alert alert = new Alert(Alert.AlertType.ERROR); // create an alert
-                alert.setContentText("provide a valid username!");
-                alert.show();
+
+
+                return false;
             }
             else{
                 while(resultSet.next()){
                     String retrivePassword = resultSet.getString("password");
                     if(retrivePassword.equals(password)){
                         System.out.println("User found in the database!");
-                        changeScene(event,"Logged in!","logged-in.fxml",username); // change the scene
+                        // deve restituire un valore che mi permetta di passare alla pagina successiva
+                        //changeScene(event,"Logged in!","logged-in.fxml",username); // change the scene
+                        return true;
                     }
                     else{
                         System.out.println("Wrong password!");
                         Alert alert = new Alert(Alert.AlertType.ERROR); // create an alert
                         alert.setContentText("provide a valid password!");
                         alert.show();
+                        return false;
                     }
                 }
 
@@ -244,36 +301,40 @@ public class DBUtilsClient {
                 }
             }
         }
-
+        return false;
     }
-    public static void logInDip(ActionEvent event, String username,String password){
+    public static String logInDip(String Nome,String Cognome,String password){
         Connection connection = null; // initialize the connection
         PreparedStatement preparedStatement = null; // check if the user already exists
         ResultSet resultSet = null;
         try{
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/javafx wine","root",""); // connect to the database
-            preparedStatement = connection.prepareStatement("SELECT password FROM users WHERE username = ?"); // check if the user already exists
-            preparedStatement.setString(1,username); // set the username
+            preparedStatement = connection.prepareStatement("SELECT password,isAdmin FROM dipendente WHERE Nome = ? AND Cognome = ?"); // check if the user already exists
+            preparedStatement.setString(1,Nome); // set the username
+            preparedStatement.setString(2,Cognome);
             resultSet = preparedStatement.executeQuery(); // execute the query
             if(!resultSet.isBeforeFirst()){
-                System.out.println("User not found in the database!");
-                Alert alert = new Alert(Alert.AlertType.ERROR); // create an alert
-                alert.setContentText("provide a valid username!");
-                alert.show();
+                System.out.println("Employee not found in the database!");
+                return "false|0";
             }
             else{
                 while(resultSet.next()){
                     String retrivePassword = resultSet.getString("password");
-                    if(retrivePassword.equals(password)){
-                        System.out.println("User found in the database!");
-                        changeScene(event,"Logged in!","logged-in.fxml",username); // change the scene
+                    int retriveIsAdmin = resultSet.getInt("isAdmin");
+                    if(Nome.length()!=0 || Cognome.length()!=0){
+                        if(retrivePassword.equals(password)){
+                            System.out.println("Employeee found in the database!");
+                            return "true|"+retriveIsAdmin+"";
+                        }
+                        else{
+                            System.out.println("Wrong password!");
+                            return "false|0";
+                        }
                     }
                     else{
-                        System.out.println("Wrong password!");
-                        Alert alert = new Alert(Alert.AlertType.ERROR); // create an alert
-                        alert.setContentText("provide a valid password!");
-                        alert.show();
+                        break;
                     }
+
                 }
 
             }
@@ -303,94 +364,8 @@ public class DBUtilsClient {
                 }
             }
         }
-
+        return "false|0";
     }
-    // controllo per la quantità del prodotto nel magazzino
-    public static void Order(ActionEvent event,Order order){
-        Parent root = null;
-        Connection connection = null; // initialize the connection
-        PreparedStatement preparedStatement = null; // check if the user already exists
-        ResultSet resultSet = null;
-
-        try{
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/javafx wine","root",""); // connect to the database
-            preparedStatement = connection.prepareStatement("SELECT quantita,prezzo FROM wine WHERE Nome LIKE CONCAT( ?,'%')"); // check if the user already exists
-            preparedStatement.setString(1,order.getWineOrder()); // set the username
-
-            resultSet = preparedStatement.executeQuery(); // execute the query
-            if(!resultSet.isBeforeFirst()){
-
-                System.out.println("quantità non valida !");
-                Alert alert = new Alert(Alert.AlertType.ERROR); // create an alert
-                alert.setContentText("quantità non valida !");
-                alert.show();
-                changeScene(event,"Logged in!","logged-in.fxml", order.getUsername());
-            }
-            else {
-
-                while (resultSet.next()) {
-                    int qta = resultSet.getInt("quantita");
-                    float prezzo = resultSet.getFloat("prezzo");
-
-                    if(order.getQta()>= qta){
-
-                        System.out.println("quantità non superiore al magazzino!");
-                        Alert alert = new Alert(Alert.AlertType.ERROR); // create an alert
-                        alert.setContentText("quantità non presente in magazzino!");
-                        alert.show();
-                        break;
-
-                    }
-                    else{
-                        System.out.println("prezzo CAD: "+prezzo);
-
-
-                        order.setPrice(prezzo*order.getQta());
-                        order.toStringOrder();
-
-                        CartController.getOrders().add(new Order(order.getUsername(),order.getWineOrder(),order.getQta(),order.getPrice()));
-                        System.out.println(order.getUsername()+" ha aggiunto al carrello!");
-                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION); // create an alert
-                        alert.setContentText("aggiunto al carrello!");
-                        alert.show();
-
-                        break;
-
-                    }
-
-                }
-                changeScene(event,"Logged in!","logged-in.fxml",order.getUsername());
-            }
-
-        }catch (SQLException e ){
-            e.printStackTrace();
-        }
-        finally {
-            if(resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if(preparedStatement != null){
-                try{
-                    preparedStatement.close();
-                }catch (SQLException e){
-                    e.printStackTrace();
-                }
-            }
-            if(connection != null){
-                try{
-                    connection.close();
-                }catch (SQLException e){
-                    e.printStackTrace();
-                }
-            }
-        }
-
-    }
-
 
 
     public static ObservableList<Wine> ViewList(String name,String region, int PrizeMin,int  PrizeMax){
@@ -463,18 +438,14 @@ public class DBUtilsClient {
         return null;
     }
 
-    public static void sendOrder(ObservableList<Order> listO, ActionEvent event, String username) {
-        for(int i=0;i<listO.size();i++){
-            System.out.println(listO.get(i).getWineOrder());
-        }
+    public static Boolean sendOrder(ObservableList<Order> listO) {
+
         Connection connection = null; // initialize the connection
         PreparedStatement preparedStatement = null; // check if the user already exists
-        ResultSet resultSet = null;
+
         try{
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/javafx wine","root",""); // connect to the database
-            System.out.println(listO.size());
             for(Order o : listO){
-                System.out.println(o.getWineOrder()+" "+o.getQta()+" "+o.getPrice()+" "+o.getUsername());
                 preparedStatement = connection.prepareStatement("INSERT INTO orders (user, wine, qta, price) VALUES (?,?,?,?)"); // select all the wines
                 preparedStatement.setString(1,o.getUsername());
                 preparedStatement.setString(2,o.getWineOrder());
@@ -482,6 +453,7 @@ public class DBUtilsClient {
                 preparedStatement.setFloat(4,o.getPrice());
 
                 preparedStatement.executeUpdate();
+
                 /*
                 preparedStatement = connection.prepareStatement("UPDATE wine SET quantita = quantita - ? WHERE nome = ?");
                 preparedStatement.setInt(1,o.getQta());
@@ -489,23 +461,12 @@ public class DBUtilsClient {
                 preparedStatement.executeUpdate();
                 */
             }
-
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION); // create an alert
-            alert.setContentText("ordine inviato!");
-            alert.show();
-            changeScene(event,"Logged in!","logged-in.fxml",username);
+            return true;
         }
         catch (SQLException e){
             e.printStackTrace();
         }
         finally {
-            if(resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
             if(preparedStatement != null){
                 try{
                     preparedStatement.close();
@@ -521,5 +482,8 @@ public class DBUtilsClient {
                 }
             }
         }
+        return false;
     }
+
+
 }
