@@ -91,32 +91,21 @@ public class CartController implements Initializable {
 
     }
     public void Delete(){
-        try{
-            String NomeWine = fx_NomeWine.getText();
-            int Qta = Integer.parseInt(fx_Qta.getText());
-            table_Wine.setItems(OrderManagement.removeOrder(CartController.getOrders(),NomeWine));
-            table_Wine.refresh();
-            fx_NomeWine.setText("");
-            fx_Qta.setText("");
-        }
-        catch(Exception e){
-        }
+        String NomeWine = fx_NomeWine.getText();
+        int Qta = Integer.parseInt(fx_Qta.getText());
+        table_Wine.setItems(OrderManagement.removeOrder(CartController.getOrders(),NomeWine));
+        table_Wine.refresh();
+        fx_NomeWine.setText("");
+        fx_Qta.setText("");
 
     }
     public void Update(){
-        try{
-            String NomeWine = fx_NomeWine.getText();
-            int Qta = Integer.parseInt(fx_Qta.getText());
-            table_Wine.setItems(OrderManagement.updateQta(CartController.getOrders(),NomeWine,Qta));
-            table_Wine.refresh();
-            fx_NomeWine.setText("");
-            fx_Qta.setText("");
-        }
-        catch(Exception e){
-
-        }
-
-
+        String NomeWine = fx_NomeWine.getText();
+        int Qta = Integer.parseInt(fx_Qta.getText());
+        table_Wine.setItems(OrderManagement.updateQta(CartController.getOrders(),NomeWine,Qta));
+        table_Wine.refresh();
+        fx_NomeWine.setText("");
+        fx_Qta.setText("");
     }
     @Override
     public void initialize(java.net.URL location, java.util.ResourceBundle resources) {

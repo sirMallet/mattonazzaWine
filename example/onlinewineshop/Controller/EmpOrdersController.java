@@ -1,15 +1,20 @@
 package com.example.onlinewineshop.Controller;
 
 import com.example.onlinewineshop.classes.*;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 
 
 public class EmpOrdersController implements Initializable {
@@ -69,19 +74,113 @@ public class EmpOrdersController implements Initializable {
         tf_Prezzo.setText(Col_Prezzo.getCellData(index).toString());
     }
     @FXML
+    public void Accept(){
+
+        try {
+            ei.getEmployeSession().sendMessage("GestoreOrder|Accept|"+tf_UserName.getText()+"|"+ei.getNome()+"|"+ei.getCognome());
+            ei.getEmployeSession().listenForMessage();
+            Thread.sleep(250);
+            String messageFromServer = ei.getEmployeSession().getmsg();
+            if(messageFromServer.equals("true")){
+                Alert alert = new Alert(Alert.AlertType.INFORMATION); // create an alert
+                alert.setTitle("In attesa della Conferma o Annullamento");
+                alert.setHeaderText("in Attesa");
+                alert.setContentText("in Attesa");
+                alert.show();
+            }
+            else{
+                Alert alert = new Alert(Alert.AlertType.INFORMATION); // create an alert
+                alert.setTitle("Errore in fase di accettazione");
+                alert.setHeaderText("Errore in fase di accettazione");
+                alert.setContentText("Errore in fase di accettazione");
+                alert.show();
+            }
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+
+
+        }
+
+    }
+    @FXML
     public void Delete(){
-        try{
-            String NomeUser = tf_UserName.getText();
-            DBUtilsEmployee.Delete(NomeUser,"Order");
-            table_Orders.refresh();
-            listO = DBUtilsEmployee.ViewListOrder();
-            // aggiungere la lista alla tabella
-            table_Orders.setItems(listO);
+        try {
+            ei.getEmployeSession().sendMessage("GestoreOrder|Delete|"+tf_UserName.getText());
+            ei.getEmployeSession().listenForMessage();
+            Thread.sleep(250);
+            String messageFromServer = ei.getEmployeSession().getmsg();
+            if(messageFromServer.equals("true")){
+                Alert alert = new Alert(Alert.AlertType.INFORMATION); // create an alert
+                alert.setTitle("Ordine Eliminato");
+                alert.setHeaderText("Ordine Eliminato");
+                alert.setContentText("Ordine Eliminato");
+                alert.show();
+            }
+            else{
+                Alert alert = new Alert(Alert.AlertType.INFORMATION); // create an alert
+                alert.setTitle("Ordine non Eliminato");
+                alert.setHeaderText("Ordine non Eliminato");
+                alert.setContentText("Ordine non Eliminato");
+                alert.show();
+            }
+            try {
+                ei.getEmployeSession().sendMessage("ViewListOrder");
+                ei.getEmployeSession().listenForMessage();
+                Thread.sleep(250);
+                messageFromServer = ei.getEmployeSession().getmsg();
+                listO = returnList(messageFromServer);
+                table_Orders.setItems(listO);
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+
+            }
+
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
 
         }
-        catch(Exception e){
-        }
+        tf_UserName.clear();
+        tf_Prezzo.clear();
+        tf_Qta.clear();
 
+    }
+    public ObservableList<Order> returnList(String msgList){
+        ObservableList<Order> listOtmp = FXCollections.observableArrayList();
+        String[] tmp = msgList.split(";");
+        for(String i: tmp){
+            String[] msg = i.split("[|]");
+            listOtmp.add(new Order(msg[0],msg[1],Integer.parseInt(msg[2]),Float.parseFloat(msg[3])));
+        }
+        return listOtmp;
+    }
+    public EmployeInformation ei;
+    int flag=0;
+    @FXML
+    private void receiveData(MouseEvent event) {
+        if(flag == 0) {
+            // Step 1
+            Node node = (Node) event.getSource();
+            Stage stage = (Stage) node.getScene().getWindow();
+            // Step 2
+            ei = (EmployeInformation) stage.getUserData();
+            // Step 3
+            button_Emp.setDisable(ei.getAdmin()==0);
+            UserName.setText(ei.getNome());
+            fx_Label.setText("Benvenuto " + ei.getNome()+ "!");
+            try {
+                ei.getEmployeSession().sendMessage("ViewListOrder");
+                ei.getEmployeSession().listenForMessage();
+                Thread.sleep(250);
+                String messageFromServer = ei.getEmployeSession().getmsg();
+                listO = returnList(messageFromServer);
+                table_Orders.setItems(listO);
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+
+            }
+            flag=1;
+
+        }
     }
     @Override
     public void initialize(java.net.URL location, java.util.ResourceBundle resources) {
@@ -94,51 +193,39 @@ public class EmpOrdersController implements Initializable {
         Col_UserName.setCellValueFactory(new PropertyValueFactory<Order, String>("username"));
         Col_Qta.setCellValueFactory(new PropertyValueFactory<Order, Integer>("qta"));
         Col_Prezzo.setCellValueFactory(new PropertyValueFactory<Order, Float>("price"));
-
-        listO = DBUtilsEmployee.ViewListOrder();
-        // aggiungere la lista alla tabella
-        table_Orders.setItems(listO);
-
-
-
-
-
         button_Wines.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtilsEmployee.changeScene(event,"Wines Management","EmpWines.fxml",UserName.getText(),CheckAdmin);
+                EmployeSession.changeScene(event,"Wines Management","EmpWines.fxml",ei);
             }
         });
         button_Clients.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtilsEmployee.changeScene(event,"Clients Management","EmpClients.fxml",UserName.getText(),CheckAdmin);
+                EmployeSession.changeScene(event,"Clients Management","EmpClients.fxml",ei);
 
             }
         });
         button_Logout.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtilsClient.changeScene(event,"Log in!","login.fxml",null);
+                ei.setNome(null);
+                ei.setCognome(null);
+                ei.setAdmin(0);
+                EmployeSession.changeScene(event,"Log in!","login.fxml",ei);
             }
         });
         button_Emp.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtilsEmployee.changeScene(event,"Employee Management","EmpAdmin.fxml",UserName.getText(),CheckAdmin);
+                EmployeSession.changeScene(event,"Employee Management","EmpAdmin.fxml",ei);
             }
         });
 
     }
-    public void setUserInformation(String username, int isAdmin){
-        CheckAdmin = isAdmin;
-        button_Emp.setDisable(CheckAdmin == 0);
-        UserName.setText(username);
-        fx_Label.setText("Benvenuto " + UserName.getText() + "!");
-    }
 
-    @FXML
-    public void Accept(MouseEvent mouseEvent) {
-    }
+
+
+
 }
 

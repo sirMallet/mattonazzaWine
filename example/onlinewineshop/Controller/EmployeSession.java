@@ -86,23 +86,7 @@ public class EmployeSession {
             try {
                 FXMLLoader loader = new FXMLLoader(com.example.onlinewineshop.Controller.DBUtilsEmployee.class.getResource(fxmlFile));    //carico il file fxml
                 root = loader.load(); // load the fxml file
-                switch (fxmlFile) {
-                    case "EmpWines.fxml" -> {
-                        EmpWinesController empWinesController = loader.getController(); // get the controller
-                    }
-                    case "EmpClients.fxml" -> {
-                        EmpClientsController empClientsController = loader.getController(); // get the controller
-                        empClientsController.setUserInformation(ei.getNome(), ei.getAdmin()); // set the username
-                    }
-                    case "EmpOrders.fxml" -> {
-                        EmpOrdersController empOrdersController = loader.getController(); // get the controller
-                        empOrdersController.setUserInformation(ei.getNome(), ei.getAdmin()); // set the username
-                    }
-                    case "EmpAdmin.fxml" -> {
-                        EmpAdminController empAdminController = loader.getController(); // get the controller
-                        empAdminController.setUserInformation(ei.getNome(), ei.getAdmin()); // set the username
-                    }
-                }
+
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -119,7 +103,13 @@ public class EmployeSession {
         Stage stage = (Stage)((Node) event.getSource()).getScene().getWindow(); // get the stage from the event source (the button) and get the scene from the stage and get the window from the scene
         stage.setTitle(title);
         stage.setUserData(ei);
-        stage.setScene(new Scene(root,1000,500)); // set the scene
+
+        if(title.equals("Log in!")){
+            stage.setScene(new Scene(root,600,400)); // set the scene
+        }
+        else{
+            stage.setScene(new Scene(root,1000,500));
+        }
         stage.show();
     }
 

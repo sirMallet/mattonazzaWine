@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="1150.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.onlinewineshop.Controller.EmpAdminController">
+    <children>
+        <AnchorPane onMouseMoved="#receiveData" prefHeight="400.0" prefWidth="240.0" style="-fx-background-color: #75151E;">
+            <children>
+                <Label fx:id="fx_Label" layoutX="9.0" layoutY="14.0" textFill="WHITE">
+                    <font>
+                        <Font name="Cambria" size="14.0" />
+                    </font>
+                </Label>
+                <Label fx:id="UserName" layoutX="19.0" layoutY="91.0" textFill="WHITE">
+                    <font>
+                        <Font name="Cambria" size="14.0" />
+                    </font>
+                </Label>
+
+            </children>
+
+        </AnchorPane>
+
+        <AnchorPane prefHeight="400.0" prefWidth="505.0">
+            <children>
+                <TableView fx:id="table_Emp" onMouseClicked="#getSelected" onMouseMoved="#receiveData" prefHeight="500.0" prefWidth="774.0">
+                    <columns>
+                        <TableColumn fx:id="Col_Dipendente" prefWidth="200.8000030517578" text="Dipendente" />
+                        <TableColumn fx:id="Col_Cliente" prefWidth="198.39999389648438" text="Cliente" />
+                        <TableColumn fx:id="Col_NOrdine" prefWidth="201.20001220703125" text="N° Ordini" />
+                        <TableColumn fx:id="Col_TotPrezzo" prefWidth="174.0" text="Tot. Prezzo" />
+                    </columns>
+                </TableView>
+            </children></AnchorPane>
+    </children>
+</HBox>

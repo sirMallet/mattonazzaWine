@@ -103,7 +103,7 @@
                 </Button>
             </children></AnchorPane>
 
-        <AnchorPane onMouseMoved="#receiveData" prefHeight="400.0" prefWidth="505.0">
+        <AnchorPane prefHeight="400.0" prefWidth="505.0">
             <children>
                 <TableView fx:id="table_Wine" onMouseClicked="#getSelected" onMouseMoved="#receiveData" prefHeight="500.0" prefWidth="774.0">
                     <columns>

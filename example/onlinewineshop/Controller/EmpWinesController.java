@@ -1,6 +1,7 @@
 package com.example.onlinewineshop.Controller;
 
 import com.example.onlinewineshop.classes.Wine;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -76,139 +77,152 @@ public class EmpWinesController implements Initializable {
     private Button button_Modifica;
     @FXML
     public void Add(){
-        Connection connection = null; // initialize the connection
-        PreparedStatement preparedStatement = null; // check if the user already exists
-        ResultSet resultSet = null;
-        try{
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/javafx wine","root",""); // connect to the database
-            preparedStatement = connection.prepareStatement("INSERT INTO wine (Nome,vintage,region,varietal,valutazione,prezzo,quantita)VALUES(?,?,?,?,?,?,?)"); // check if the user already exists
-            preparedStatement.setString(1, tf_wine.getText()); // set the name wine
-            preparedStatement.setString(2, tf_Vintage.getText()); // set the varietal
-            preparedStatement.setString(3, tf_Regione.getText()); // set the region
-            preparedStatement.setString(4, tf_Varietal.getText()); // set the vintage
-            preparedStatement.setString(5, tf_Val.getText()); // set the value
-            preparedStatement.setString(6, tf_Prezzo.getText()); // set the price
-            preparedStatement.setString(7, tf_Qta.getText()); // set the qta
-
-
-            preparedStatement.execute(); // execute the query
-            tf_wine.clear();
-            tf_Varietal.clear();
-            tf_Regione.clear();
-            tf_Vintage.clear();
-            tf_Val.clear();
-            tf_Prezzo.clear();
-            tf_Qta.clear();
-
-
-            listW = DBUtilsEmployee.ViewListWines();
-            // aggiungere la lista alla tabella
-            table_Wine.setItems(listW);
-
-            Alert alert = new Alert(Alert.AlertType.INFORMATION); // create an alert
-            alert.setTitle("Cliente aggiornato");
-            alert.setHeaderText("Cliente aggiornato");
-            alert.setContentText("Cliente aggiornato");
-            alert.show();
-
-
-
-        }catch (SQLException e){
-            e.printStackTrace();
-        }
-        finally {
-
-            if(preparedStatement != null){
-                try{
-                    preparedStatement.close();
-                }catch (SQLException e){
-                    e.printStackTrace();
-                }
+        try {
+            ei.getEmployeSession().sendMessage("GestoreWine|Add|"+tf_wine.getText()+"|"+tf_Regione.getText()+"|"+tf_Vintage.getText()+"|"+tf_Varietal.getText()+"|"+tf_Val.getText()+"|"+tf_Prezzo.getText()+"|"+tf_Qta.getText());
+            ei.getEmployeSession().listenForMessage();
+            Thread.sleep(250);
+            String messageFromServer = ei.getEmployeSession().getmsg();
+            if(messageFromServer.equals("true")){
+                Alert alert = new Alert(Alert.AlertType.INFORMATION); // create an alert
+                alert.setTitle("Vino aggiunto");
+                alert.setHeaderText("Vino aggiunto");
+                alert.setContentText("Vino aggiunto");
+                alert.show();
             }
-            if(connection != null){
-                try{
-                    connection.close();
-                }catch (SQLException e){
-                    e.printStackTrace();
-                }
+            else{
+                Alert alert = new Alert(Alert.AlertType.INFORMATION); // create an alert
+                alert.setTitle("Vino non aggiunto");
+                alert.setHeaderText("Vino non aggiunto");
+                alert.setContentText("Vino non aggiunto");
+                alert.show();
             }
+            try {
+                ei.getEmployeSession().sendMessage("ViewList"+"|||0|1000");
+                ei.getEmployeSession().listenForMessage();
+                Thread.sleep(250);
+                messageFromServer = ei.getEmployeSession().getmsg();
+                listW = returnList(messageFromServer);
+                table_Wine.setItems(listW);
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+
+            }
+
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+
         }
+        tf_wine.clear();
+        tf_Varietal.clear();
+        tf_Regione.clear();
+        tf_Vintage.clear();
+        tf_Val.clear();
+        tf_Prezzo.clear();
+        tf_Qta.clear();
 
-
-        System.out.println("Add");
     }
 
     public void Delete(){
-        try{
-            String NomeWine = tf_wine.getText();
-            DBUtilsEmployee.Delete(NomeWine,"Wine");
-            table_Wine.refresh();
-            listW = DBUtilsEmployee.ViewListWines();
-            // aggiungere la lista alla tabella
-            table_Wine.setItems(listW);
+        try {
+            ei.getEmployeSession().sendMessage("GestoreWine|Delete|"+tf_wine.getText()+"|"+tf_Regione.getText()+"|"+tf_Vintage.getText()+"|"+tf_Varietal.getText()+"|"+tf_Val.getText()+"|"+tf_Prezzo.getText()+"|"+tf_Qta.getText());
+            ei.getEmployeSession().listenForMessage();
+            Thread.sleep(250);
+            String messageFromServer = ei.getEmployeSession().getmsg();
+            if(messageFromServer.equals("true")){
+                Alert alert = new Alert(Alert.AlertType.INFORMATION); // create an alert
+                alert.setTitle("Vino Eliminato");
+                alert.setHeaderText("Vino Eliminato");
+                alert.setContentText("Vino Eliminato");
+                alert.show();
+            }
+            else{
+                Alert alert = new Alert(Alert.AlertType.INFORMATION); // create an alert
+                alert.setTitle("Vino non Eliminato");
+                alert.setHeaderText("Vino non Eliminato");
+                alert.setContentText("Vino non Eliminato");
+                alert.show();
+            }
+            try {
+                ei.getEmployeSession().sendMessage("ViewList"+"|||0|1000");
+                ei.getEmployeSession().listenForMessage();
+                Thread.sleep(250);
+                messageFromServer = ei.getEmployeSession().getmsg();
+                listW = returnList(messageFromServer);
+                table_Wine.setItems(listW);
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+
+            }
+
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
 
         }
-        catch(Exception e){
-        }
+        tf_wine.clear();
+        tf_Varietal.clear();
+        tf_Regione.clear();
+        tf_Vintage.clear();
+        tf_Val.clear();
+        tf_Prezzo.clear();
+        tf_Qta.clear();
 
     }
     @FXML
     public void Update(){
-
-
-        Connection connection = null; // initialize the connection
-        PreparedStatement preparedStatement = null; // check if the user already exists
-        ResultSet resultSet = null;
-        try{
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/javafx wine","root",""); // connect to the database
-            preparedStatement = connection.prepareStatement("UPDATE wine SET vintage=?,valutazione=?,prezzo=?,quantita=?  WHERE Nome = ?"); // check if the user already exists
-            preparedStatement.setString(1, tf_Vintage.getText()); // set the username
-            preparedStatement.setString(2, tf_Val.getText()); // set the Valutazione
-            preparedStatement.setString(3, tf_Prezzo.getText()); // set the price
-            preparedStatement.setString(4, tf_Qta.getText()); // set the quantita
-            preparedStatement.setString(5, WineSelected.getNome()); // set the password
-            preparedStatement.execute(); // execute the query
-            tf_wine.clear();
-            tf_Vintage.clear();
-            tf_Val.clear();
-            tf_Prezzo.clear();
-            tf_Qta.clear();
-
-            listW = DBUtilsEmployee.ViewListWines();
-            // aggiungere la lista alla tabella
-            table_Wine.setItems(listW);
-
-            Alert alert = new Alert(Alert.AlertType.INFORMATION); // create an alert
-            alert.setTitle("Cliente aggiornato");
-            alert.setHeaderText("Cliente aggiornato");
-            alert.setContentText("Cliente aggiornato");
-            alert.show();
-
-
-
-        }catch (SQLException e){
-            e.printStackTrace();
-        }
-        finally {
-
-            if(preparedStatement != null){
-                try{
-                    preparedStatement.close();
-                }catch (SQLException e){
-                    e.printStackTrace();
-                }
+        try {
+            ei.getEmployeSession().sendMessage("GestoreWine|Update|"+tf_wine.getText()+"|"+tf_Regione.getText()+"|"+tf_Vintage.getText()+"|"+tf_Varietal.getText()+"|"+tf_Val.getText()+"|"+tf_Prezzo.getText()+"|"+tf_Qta.getText());
+            ei.getEmployeSession().listenForMessage();
+            Thread.sleep(250);
+            String messageFromServer = ei.getEmployeSession().getmsg();
+            if(messageFromServer.equals("true")){
+                Alert alert = new Alert(Alert.AlertType.INFORMATION); // create an alert
+                alert.setTitle("Vino Modificato");
+                alert.setHeaderText("Vino Modificato");
+                alert.setContentText("Vino Modificato");
+                alert.show();
             }
-            if(connection != null){
-                try{
-                    connection.close();
-                }catch (SQLException e){
-                    e.printStackTrace();
-                }
+            else{
+                Alert alert = new Alert(Alert.AlertType.INFORMATION); // create an alert
+                alert.setTitle("Vino non Modificato");
+                alert.setHeaderText("Vino non Modificato");
+                alert.setContentText("Vino non Modificato");
+                alert.show();
             }
+            try {
+                ei.getEmployeSession().sendMessage("ViewList"+"|||0|1000");
+                ei.getEmployeSession().listenForMessage();
+                Thread.sleep(250);
+                messageFromServer = ei.getEmployeSession().getmsg();
+                listW = returnList(messageFromServer);
+                table_Wine.setItems(listW);
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+
+            }
+
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+
         }
+        tf_wine.clear();
+        tf_Varietal.clear();
+        tf_Regione.clear();
+        tf_Vintage.clear();
+        tf_Val.clear();
+        tf_Prezzo.clear();
+        tf_Qta.clear();
+
     }
 
-
+    public ObservableList<Wine> returnList(String msgList){
+        ObservableList<Wine> listWtmp = FXCollections.observableArrayList();
+        String[] tmp = msgList.split(";");
+        for(String i: tmp){
+            String[] msg = i.split("[|]");
+            listWtmp.add(new Wine(msg[0],msg[1],Integer.parseInt(msg[2]),msg[3],Integer.parseInt(msg[4]),Float.parseFloat(msg[5]),Integer.parseInt(msg[6])));
+        }
+        return listWtmp;
+    }
     @FXML
     void getSelected(MouseEvent event) {
         index = table_Wine.getSelectionModel().getSelectedIndex();
@@ -249,23 +263,23 @@ public class EmpWinesController implements Initializable {
             button_Emp.setDisable(ei.getAdmin()==0);
             UserName.setText(ei.getNome());
             fx_Label.setText("Benvenuto " + ei.getNome()+ "!");
+            try {
+                ei.getEmployeSession().sendMessage("ViewList"+"|||0|1000");
+                ei.getEmployeSession().listenForMessage();
+                Thread.sleep(250);
+                String messageFromServer = ei.getEmployeSession().getmsg();
+                listW = returnList(messageFromServer);
+                table_Wine.setItems(listW);
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
 
-            //try {
-                //ei.getClientSession().sendMessage("ViewList"+"|||0|1000");
-                //ei.getClientSession().listenForMessage();
-                //Thread.sleep(250);
-                //String messageFromServer = ui.getClientSession().getmsg();
-                //listW = returnList(messageFromServer);
-                //table_Wine.setItems(listW);
-                //} catch (IOException | InterruptedException e) {
-                //throw new RuntimeException(e);
-            //}
-            //flag=1;
+            }
+            flag=1;
+
         }
     }
     @Override
     public void initialize(java.net.URL location, java.util.ResourceBundle resources) {
-
 
         UserName.setVisible(false);
         WineSelected = new Wine();
@@ -279,37 +293,40 @@ public class EmpWinesController implements Initializable {
         col_Val.setCellValueFactory(new PropertyValueFactory<Wine, Integer>("Valutazione"));
         col_Prezzo.setCellValueFactory(new PropertyValueFactory<Wine, Float>("Prezzo"));
         col_Qta.setCellValueFactory(new PropertyValueFactory<Wine, Integer>("Qta"));
-        // prendere i dati dal database
-        listW = DBUtilsEmployee.ViewListWines();
-        // aggiungere la lista alla tabella
-        table_Wine.setItems(listW);
+
+
 
         button_Clients.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtilsEmployee.changeScene(event,"Clients Management","EmpClients.fxml",UserName.getText(),CheckAdmin);
+                EmployeSession.changeScene(event,"Clients Management","EmpClients.fxml",ei);
             }
         });
         button_Logout.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtilsClient.changeScene(event,"Log in!","login.fxml",null);
+                ei.setAdmin(0);
+                ei.setNome(null);
+                ei.setCognome(null);
+                EmployeSession.changeScene(event,"Log in!","login.fxml",ei);
             }
         });
         button_Orders.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtilsEmployee.changeScene(event,"Orders Management","EmpOrders.fxml",UserName.getText(),CheckAdmin);
+                EmployeSession.changeScene(event,"Orders Management","EmpOrders.fxml",ei);
             }
         });
         button_Emp.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtilsEmployee.changeScene(event,"Employee Management","EmpAdmin.fxml",UserName.getText(),CheckAdmin);
+                EmployeSession.changeScene(event,"Employee Management","EmpAdmin.fxml",ei);
             }
         });
 
     }
+
+
 
 }
 

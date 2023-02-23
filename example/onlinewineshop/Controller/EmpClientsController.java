@@ -1,15 +1,20 @@
 package com.example.onlinewineshop.Controller;
 
 import com.example.onlinewineshop.classes.Client;
+import com.example.onlinewineshop.classes.Wine;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.*;
 
 
@@ -74,141 +79,150 @@ public class EmpClientsController implements Initializable {
     ObservableList<Client> listC = null;
 
     public void Delete(){
-        try{
-            String UserName = tf_UserName.getText();
-            DBUtilsEmployee.Delete(UserName,"Client");
-            table_Client.refresh();
-            listC = DBUtilsEmployee.ViewListClient();
-            // aggiungere la lista alla tabella
-            table_Client.setItems(listC);
+        try {
+            ei.getEmployeSession().sendMessage("GestoreClient|Delete|"+tf_UserName.getText()+"|"+tf_Password.getText()+"|"+tf_Nome.getText()+"|"+tf_Cognome.getText()+"|"+tf_CodiceFiscale.getText()+"|"+tf_Phone.getText()+"|"+tf_Indirizzo.getText()+"|"+tf_Email.getText());
+            ei.getEmployeSession().listenForMessage();
+            Thread.sleep(100);
+            String messageFromServer = ei.getEmployeSession().getmsg();
+            System.out.println(messageFromServer);
+            if(messageFromServer.equals("true")){
+                Alert alert = new Alert(Alert.AlertType.INFORMATION); // create an alert
+                alert.setTitle("Cliente eliminato");
+                alert.setHeaderText("Cliente eliminato");
+                alert.setContentText("Cliente eliminato");
+                alert.show();
+            }
+            else{
+                Alert alert = new Alert(Alert.AlertType.INFORMATION); // create an alert
+                alert.setTitle("Cliente Non eliminato");
+                alert.setHeaderText("Cliente Non eliminato");
+                alert.setContentText("Cliente Non eliminato");
+                alert.show();
+            }
+            try {
+                ei.getEmployeSession().sendMessage("ViewListClient");
+                ei.getEmployeSession().listenForMessage();
+                Thread.sleep(250);
+                messageFromServer = ei.getEmployeSession().getmsg();
+                listC = returnList(messageFromServer);
+                table_Client.setItems(listC);
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+
+            }
+
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
 
         }
-        catch(Exception e){
-        }
+
+
+        tf_Nome.clear();
+        tf_Cognome.clear();
+        tf_UserName.clear();
+        tf_Password.clear();
+        tf_CodiceFiscale.clear();
+        tf_Phone.clear();
+        tf_Indirizzo.clear();
+        tf_Email.clear();
 
     }
     @FXML
     public void Add(){
-        Connection connection = null; // initialize the connection
-        PreparedStatement preparedStatement = null; // check if the user already exists
-        ResultSet resultSet = null;
-        try{
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/javafx wine","root",""); // connect to the database
-            preparedStatement = connection.prepareStatement("INSERT INTO users (userName,password,name,surname,fiscalCode,phone,address,email)VALUES(?,?,?,?,?,?,?,?)"); // check if the user already exists
-            preparedStatement.setString(1, tf_UserName.getText()); // set the username
-            preparedStatement.setString(2, tf_Password.getText()); // set the password
-            preparedStatement.setString(3, tf_Nome.getText()); // set the name
-            preparedStatement.setString(4, tf_Cognome.getText()); // set the surname
-            preparedStatement.setString(5, tf_CodiceFiscale.getText()); // set the fiscalCode
-            preparedStatement.setString(6, tf_Phone.getText()); // set the phone
-            preparedStatement.setString(7, tf_Indirizzo.getText()); // set the address
-            preparedStatement.setString(8, tf_Email.getText()); // set the email
-
-            preparedStatement.execute(); // execute the query
-            tf_Nome.clear();
-            tf_Cognome.clear();
-            tf_UserName.clear();
-            tf_Password.clear();
-            tf_CodiceFiscale.clear();
-            tf_Phone.clear();
-            tf_Indirizzo.clear();
-            tf_Email.clear();
-
-            listC = DBUtilsEmployee.ViewListClient();
-            // aggiungere la lista alla tabella
-            table_Client.setItems(listC);
-
-            Alert alert = new Alert(Alert.AlertType.INFORMATION); // create an alert
-            alert.setTitle("Cliente aggiornato");
-            alert.setHeaderText("Cliente aggiornato");
-            alert.setContentText("Cliente aggiornato");
-            alert.show();
-
-
-
-        }catch (SQLException e){
-            e.printStackTrace();
-        }
-        finally {
-
-            if(preparedStatement != null){
-                try{
-                    preparedStatement.close();
-                }catch (SQLException e){
-                    e.printStackTrace();
-                }
+        try {
+            ei.getEmployeSession().sendMessage("GestoreClient|Add|"+tf_UserName.getText()+"|"+tf_Password.getText()+"|"+tf_Nome.getText()+"|"+tf_Cognome.getText()+"|"+tf_CodiceFiscale.getText()+"|"+tf_Phone.getText()+"|"+tf_Indirizzo.getText()+"|"+tf_Email.getText());
+            ei.getEmployeSession().listenForMessage();
+            Thread.sleep(250);
+            String messageFromServer = ei.getEmployeSession().getmsg();
+            if(messageFromServer.equals("true")){
+                Alert alert = new Alert(Alert.AlertType.INFORMATION); // create an alert
+                alert.setTitle("Cliente aggiunto");
+                alert.setHeaderText("Cliente aggiunto");
+                alert.setContentText("Cliente aggiunto");
+                alert.show();
             }
-            if(connection != null){
-                try{
-                    connection.close();
-                }catch (SQLException e){
-                    e.printStackTrace();
-                }
+            else{
+                Alert alert = new Alert(Alert.AlertType.INFORMATION); // create an alert
+                alert.setTitle("Cliente Non aggiunto");
+                alert.setHeaderText("Cliente Non aggiunto");
+                alert.setContentText("Cliente Non aggiunto");
+                alert.show();
             }
+            try {
+                ei.getEmployeSession().sendMessage("ViewListClient");
+                ei.getEmployeSession().listenForMessage();
+                Thread.sleep(250);
+                messageFromServer = ei.getEmployeSession().getmsg();
+                listC = returnList(messageFromServer);
+                table_Client.setItems(listC);
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+
+            }
+
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+
         }
 
 
-        System.out.println("Add");
+        tf_Nome.clear();
+        tf_Cognome.clear();
+        tf_UserName.clear();
+        tf_Password.clear();
+        tf_CodiceFiscale.clear();
+        tf_Phone.clear();
+        tf_Indirizzo.clear();
+        tf_Email.clear();
     }
     @FXML
     public void Update(){
-        Connection connection = null; // initialize the connection
-        PreparedStatement preparedStatement = null; // check if the user already exists
-        ResultSet resultSet = null;
-        try{
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/javafx wine","root",""); // connect to the database
-            preparedStatement = connection.prepareStatement("UPDATE users SET userName = ? ,password = ?,name = ?,surname = ?, fiscalCode= ?,phone = ?,address = ?,email=? WHERE username = ?"); // check if the user already exists
-            preparedStatement.setString(1, tf_UserName.getText()); // set the username
-            preparedStatement.setString(2, tf_Password.getText()); // set the password
-            preparedStatement.setString(3, tf_Nome.getText()); // set the name
-            preparedStatement.setString(4, tf_Cognome.getText()); // set the surname
-            preparedStatement.setString(5, tf_CodiceFiscale.getText()); // set the fiscalCode
-            preparedStatement.setString(6, tf_Phone.getText()); // set the phone
-            preparedStatement.setString(7, tf_Indirizzo.getText()); // set the address
-            preparedStatement.setString(8, tf_Email.getText()); // set the email
-            preparedStatement.setString(9,  ClientSelected.getUserName()); // set the old username
-            preparedStatement.execute(); // execute the query
-            tf_Nome.clear();
-            tf_Cognome.clear();
-            tf_UserName.clear();
-            tf_Password.clear();
-            tf_CodiceFiscale.clear();
-            tf_Phone.clear();
-            tf_Indirizzo.clear();
-            tf_Email.clear();
-
-            listC = DBUtilsEmployee.ViewListClient();
-            // aggiungere la lista alla tabella
-            table_Client.setItems(listC);
-
-            Alert alert = new Alert(Alert.AlertType.INFORMATION); // create an alert
-            alert.setTitle("Cliente aggiornato");
-            alert.setHeaderText("Cliente aggiornato");
-            alert.setContentText("Cliente aggiornato");
-            alert.show();
-
-
-
-        }catch (SQLException e){
-            e.printStackTrace();
-        }
-        finally {
-
-            if(preparedStatement != null){
-                try{
-                    preparedStatement.close();
-                }catch (SQLException e){
-                    e.printStackTrace();
-                }
+        try {
+            ei.getEmployeSession().sendMessage("GestoreClient|Update|"+tf_UserName.getText()+"|"+tf_Password.getText()+"|"+tf_Nome.getText()+"|"+tf_Cognome.getText()+"|"+tf_CodiceFiscale.getText()+"|"+tf_Phone.getText()+"|"+tf_Indirizzo.getText()+"|"+tf_Email.getText());
+            ei.getEmployeSession().listenForMessage();
+            Thread.sleep(250);
+            String messageFromServer = ei.getEmployeSession().getmsg();
+            System.out.println(messageFromServer);
+            if(messageFromServer.equals("true")){
+                Alert alert = new Alert(Alert.AlertType.INFORMATION); // create an alert
+                alert.setTitle("Cliente aggiornato");
+                alert.setHeaderText("Cliente aggiornato");
+                alert.setContentText("Cliente aggiornato");
+                alert.show();
             }
-            if(connection != null){
-                try{
-                    connection.close();
-                }catch (SQLException e){
-                    e.printStackTrace();
-                }
+            else{
+                Alert alert = new Alert(Alert.AlertType.INFORMATION); // create an alert
+                alert.setTitle("Cliente Non aggiornato");
+                alert.setHeaderText("Cliente Non aggiornato");
+                alert.setContentText("Cliente Non aggiornato");
+                alert.show();
             }
+            try {
+                ei.getEmployeSession().sendMessage("ViewListClient");
+                ei.getEmployeSession().listenForMessage();
+                Thread.sleep(10);
+                messageFromServer = ei.getEmployeSession().getmsg();
+                listC = returnList(messageFromServer);
+                table_Client.setItems(listC);
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+
+            }
+
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+
         }
+
+
+        tf_Nome.clear();
+        tf_Cognome.clear();
+        tf_UserName.clear();
+        tf_Password.clear();
+        tf_CodiceFiscale.clear();
+        tf_Phone.clear();
+        tf_Indirizzo.clear();
+        tf_Email.clear();
     }
 
     @FXML
@@ -237,6 +251,44 @@ public class EmpClientsController implements Initializable {
 
 
     }
+    public ObservableList<Client> returnList(String msgList){
+        ObservableList<Client> listCtmp = FXCollections.observableArrayList();
+        String[] tmp = msgList.split(";");
+        for(String i: tmp){
+            String[] msg = i.split("[|]");
+            listCtmp.add(new Client(msg[0],msg[1],msg[2],msg[3],msg[4],msg[5],msg[6],msg[7]));
+        }
+        return listCtmp;
+    }
+    public EmployeInformation ei;
+    int flag=0;
+    @FXML
+    private void receiveData(MouseEvent event) {
+        if(flag == 0) {
+            // Step 1
+            Node node = (Node) event.getSource();
+            Stage stage = (Stage) node.getScene().getWindow();
+            // Step 2
+            ei = (EmployeInformation) stage.getUserData();
+            // Step 3
+            button_Emp.setDisable(ei.getAdmin()==0);
+            UserName.setText(ei.getNome());
+            fx_Label.setText("Benvenuto " + ei.getNome()+ "!");
+            try {
+                ei.getEmployeSession().sendMessage("ViewListClient");
+                ei.getEmployeSession().listenForMessage();
+                Thread.sleep(250);
+                String messageFromServer = ei.getEmployeSession().getmsg();
+                listC = returnList(messageFromServer);
+                table_Client.setItems(listC);
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+
+            }
+            flag=1;
+
+        }
+    }
 
     @Override
     public void initialize(java.net.URL location, java.util.ResourceBundle resources) {
@@ -254,46 +306,36 @@ public class EmpClientsController implements Initializable {
         Col_Indirizzo.setCellValueFactory(new PropertyValueFactory<Client, String>("address"));
         Col_Phone.setCellValueFactory(new PropertyValueFactory<Client, String>("phone"));
         Col_Email.setCellValueFactory(new PropertyValueFactory<Client, String>("email"));
-        listC = DBUtilsEmployee.ViewListClient();
-        // aggiungere la lista alla tabella
-        table_Client.setItems(listC);
 
         button_Logout.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtilsClient.changeScene(event,"Log in!","login.fxml",null);
+                ei.setAdmin(0);
+                ei.setNome(null);
+                ei.setCognome(null);
+                EmployeSession.changeScene(event,"Log in!","login.fxml",ei);
             }
         });
         button_Wines.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtilsEmployee.changeScene(event,"Wines Management","EmpWines.fxml",UserName.getText(),CheckAdmin);
+                EmployeSession.changeScene(event,"Wines Management","EmpWines.fxml",ei);
             }
         });
         button_Orders.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtilsEmployee.changeScene(event,"Orders Management","EmpOrders.fxml",UserName.getText(),CheckAdmin);
+                EmployeSession.changeScene(event,"Orders Management","EmpOrders.fxml",ei);
             }
         });
         button_Emp.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtilsEmployee.changeScene(event,"Employee Management","EmpAdmin.fxml",UserName.getText(),CheckAdmin);
+                EmployeSession.changeScene(event,"Employee Management","EmpAdmin.fxml",ei);
             }
         });
 
     }
-    public void setUserInformation(String username, int isAdmin){
-        CheckAdmin = isAdmin;
-        button_Emp.setDisable(CheckAdmin == 0);
-        UserName.setText(username);
-        fx_Label.setText("Benvenuto " + UserName.getText() + "!");
-    }
-
-
-
-
 
 }
 

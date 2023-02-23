@@ -30,15 +30,12 @@ public class DBUtilsEmployee {
                         }
                         case "EmpClients.fxml" -> {
                             EmpClientsController empClientsController = loader.getController(); // get the controller
-                            empClientsController.setUserInformation(username,isAdmin); // set the username
-                        }
+                            }
                         case "EmpOrders.fxml" -> {
                             EmpOrdersController empOrdersController = loader.getController(); // get the controller
-                            empOrdersController.setUserInformation(username, isAdmin); // set the username
-                        }
+                            }
                         case "EmpAdmin.fxml" -> {
                             EmpAdminController empAdminController = loader.getController(); // get the controller
-                            empAdminController.setUserInformation(username, isAdmin); // set the username
                         }
                     }
 

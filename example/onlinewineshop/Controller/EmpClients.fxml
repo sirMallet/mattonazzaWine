@@ -7,7 +7,7 @@
 
 <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="1150.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.onlinewineshop.Controller.EmpClientsController">
     <children>
-        <AnchorPane prefHeight="400.0" prefWidth="240.0" style="-fx-background-color: #75151E;">
+        <AnchorPane onMouseMoved="#receiveData" prefHeight="400.0" prefWidth="240.0" style="-fx-background-color: #75151E;">
             <children>
                 <Button fx:id="button_Logout" layoutX="88.0" layoutY="450.0" mnemonicParsing="false" text="Logout">
                     <font>
@@ -118,7 +118,7 @@
         </AnchorPane>
         <AnchorPane prefHeight="400.0" prefWidth="505.0">
             <children>
-                <TableView fx:id="table_Client" onMouseClicked="#getSelected" prefHeight="500.0" prefWidth="774.0">
+                <TableView fx:id="table_Client" onMouseClicked="#getSelected" onMouseMoved="#receiveData" prefHeight="500.0" prefWidth="774.0">
                     <columns>
                         <TableColumn fx:id="Col_UserName" prefWidth="102.99995422363281" text="Username" />
                         <TableColumn fx:id="Col_Password" prefWidth="119.99996948242188" text="Password" />

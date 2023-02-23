@@ -22,7 +22,7 @@ import javafx.stage.*;
 
 import java.io.IOException;
 import java.net.Socket;
-
+import java.util.Optional;
 
 
 public class LoggedInController implements Initializable {
@@ -90,11 +90,7 @@ public class LoggedInController implements Initializable {
         ClientSession.changeSceneCart(event,"Cart","cart.fxml",ui);
     }
     int flag = 0;
-
-
-
-
-
+    int flagCart = 0;
     // controllo del prezzo con gli slider
     @FXML
     private Slider sd_prizeMin;
@@ -107,8 +103,6 @@ public class LoggedInController implements Initializable {
     @FXML
     private Label fx_CostoTot;
     ObservableList<Wine> listW;
-
-
 
     public ObservableList<Wine> returnList(String msgList){
         ObservableList<Wine> listWtmp = FXCollections.observableArrayList();
@@ -142,6 +136,30 @@ public class LoggedInController implements Initializable {
                 throw new RuntimeException(e);
             }
             flag=1;
+        }
+        try {
+        ui.getClientSession().sendMessage("CheckAccept|" + ui.getUsername());
+            ui.getClientSession().listenForMessage();
+            Thread.sleep(250);
+            String messageFromServer = ui.getClientSession().getmsg();
+            if(messageFromServer.equals("true")){
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Test");
+                alert.setHeaderText("This is a test.");
+                alert.setResizable(false);
+                alert.setContentText("Select okay or cancel this alert.");
+
+                Optional<ButtonType> result = alert.showAndWait();
+                ButtonType button = result.orElse(ButtonType.CANCEL);
+
+                if (button == ButtonType.OK) {
+                    System.out.println("Ok pressed");
+                } else {
+                    System.out.println("canceled");
+                }
+            }
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
